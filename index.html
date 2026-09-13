@@ -1,5 +1,9 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AllerGreat</title>
-
 <style>
   :root{
     --bg:#FFFFFF; --card:#FFFFFF; --fill:#F2F2F7; --seg-on:#FFFFFF; --inset:#F6F7F9;
@@ -50,46 +54,110 @@
   .btn .arw{opacity:.75}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 100px}
-  header.top{padding:96px 0 0;display:flex;flex-direction:column;gap:18px}
-  .brand{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;gap:12px;
-         padding:10px max(20px,calc((100vw - 1080px)/2 + 20px));background:var(--nav);
-         -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--sep)}
-  .brand-mark{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:700;letter-spacing:-.02em}
-  .brand-mark::before{content:"";width:28px;height:28px;border-radius:8px;flex:none;
-         background:linear-gradient(140deg,var(--orange),var(--red) 60%,var(--pink))}
-  .brand-tag{font-size:13px;color:var(--label-3)}
-  .brand .btn{min-height:34px;border-radius:999px}
-  @media (max-width:640px){.brand-tag{display:none}}
-  h1{font-size:clamp(34px,6.2vw,58px);font-weight:800;letter-spacing:-.032em;line-height:1.04}
-  h2{font-size:clamp(24px,3.4vw,32px);font-weight:700;letter-spacing:-.024em;line-height:1.12}
+  .top{position:sticky;top:0;z-index:50;background:var(--nav);border-bottom:1px solid var(--sep);
+       -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+  .top-in{max-width:1000px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:19px;letter-spacing:-.02em;text-decoration:none;color:var(--label)}
+  .brand::before{content:"";width:28px;height:28px;border-radius:8px;flex:none;background:linear-gradient(140deg,var(--orange),var(--red) 60%,var(--pink))}
+  .brand small{font-weight:500;font-size:13px;color:var(--label-3);margin-left:2px}
+  .tabs{display:flex;gap:2px;margin-left:auto;background:var(--fill);border-radius:11px;padding:2px}
+  .tab{--icon:none;display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:9px;padding:7px 13px;
+       font:inherit;font-size:14px;font-weight:600;color:var(--label-2);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .tab::before{content:"";width:17px;height:17px;flex:none;background:currentColor;
+       -webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat}
+  .tab[data-view="people"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='8' r='3.5'/%3E%3Cpath d='M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5'/%3E%3Ccircle cx='17.5' cy='9' r='2.5'/%3E%3Cpath d='M16.8 14.6c2.5.3 4.1 2 4.7 5.4'/%3E%3C/svg%3E")}
+  .tab[data-view="send"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.5 2.5 10.6 13.4'/%3E%3Cpath d='M21.5 2.5 14.6 21.5l-4-8.1-8.1-4z'/%3E%3C/svg%3E")}
+  .tab[data-view="sent"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='m7.6 12.4 3 3 5.9-6.3'/%3E%3C/svg%3E")}
+  .tab[aria-selected="true"]{background:var(--seg-on);color:var(--label);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .who{font-size:13px;color:var(--label-3);display:flex;gap:12px;align-items:center}
+  .link{background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--blue);cursor:pointer}
+
+  main{max-width:1000px;margin:0 auto;padding:28px 20px 90px}
+  .head{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
+  h1{font-size:clamp(30px,5vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.08}
+  h2{font-size:22px;font-weight:700;letter-spacing:-.02em}
   h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
-  .lede{font-size:clamp(17px,2.2vw,20px);color:var(--label-2);max-width:58ch}
-  section{padding:44px 0 0}
-  .sec-head{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
-  section > p{color:var(--label-2);max-width:66ch}
-  .eyebrow{--c:var(--blue);display:inline-flex;align-self:flex-start;align-items:center;gap:8px;font-size:12.5px;font-weight:700;
-           letter-spacing:.04em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:var(--fill);color:var(--c)}
-  @supports (background:color-mix(in srgb,red 10%,transparent)){.eyebrow{background:color-mix(in srgb,var(--c) 13%,transparent)}}
-  .eyebrow::before{content:attr(data-step);opacity:.65;font-variant-numeric:tabular-nums}
-  .eyebrow[data-step="01"]{--c:var(--red)} .eyebrow[data-step="02"]{--c:var(--orange)}
-  .eyebrow[data-step="03"]{--c:var(--green)} .eyebrow[data-step="04"]{--c:var(--blue)} .eyebrow[data-step="05"]{--c:var(--purple)}
+  .lede{font-size:17px;color:var(--label-2);max-width:60ch}
+  .serif{font-family:inherit}
 
-  .tool{background:var(--card);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;margin-top:26px}
-  .tool-head{padding:20px 20px 4px;display:flex;flex-direction:column;gap:4px}
-  .tool-head p{font-size:15px;color:var(--label-3)}
-  .tool-body{padding:14px 20px 20px;display:flex;flex-direction:column;gap:16px}
-  .picker{display:flex;flex-wrap:wrap;gap:8px}
+  .panel{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow)}
+  .pad{padding:20px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media (max-width:860px){.grid2{grid-template-columns:1fr}}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:520px){.row2{grid-template-columns:1fr}}
 
-  .verdict{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 18px;border-radius:16px;background:var(--fill)}
+  label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--label-3);text-transform:uppercase;letter-spacing:.03em}
+  label.f .hint{text-transform:none;letter-spacing:0}
+  .in{width:100%;background:var(--fill);border:0;border-radius:11px;padding:12px 14px;font:inherit;font-size:17px;font-weight:400;
+      color:var(--label);text-transform:none;letter-spacing:0;-webkit-appearance:none;appearance:none}
+  select.in{background-image:linear-gradient(45deg,transparent 50%,var(--label-3) 50%),linear-gradient(135deg,var(--label-3) 50%,transparent 50%);
+      background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+  .in:focus{outline:none;box-shadow:0 0 0 3px var(--blue-soft),inset 0 0 0 1.5px var(--blue)}
+  .in::placeholder{color:var(--label-3);opacity:.7}
+  textarea.in{min-height:84px;resize:vertical}
+  .hint{font-size:13px;color:var(--label-3);font-weight:400}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+
+  .seg{display:flex;flex-wrap:wrap;gap:2px;background:var(--fill);border-radius:11px;padding:2px}
+  .seg button{flex:1;min-width:84px;border:0;background:transparent;border-radius:9px;padding:9px 8px;font:inherit;font-size:14.5px;font-weight:600;
+      color:var(--label-2);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--label);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .person{padding:18px;display:flex;flex-direction:column;gap:10px}
+  .person .rel{font-size:14px;color:var(--label-3)}
+  .toks{display:flex;flex-wrap:wrap;gap:5px}
+  .person-foot{display:flex;gap:18px;margin-top:auto;padding-top:10px;border-top:1px solid var(--sep)}
+  .person-foot [data-del]{color:var(--red)}
+
+  .pick{background:var(--inset);border-radius:14px;overflow:hidden}
+  .pick label{position:relative;display:flex;gap:12px;align-items:flex-start;padding:13px 14px;cursor:pointer}
+  .pick label + label::before{content:"";position:absolute;top:0;left:46px;right:0;height:1px;background:var(--sep)}
+  .pick input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--blue);flex:none}
+  .pick .meta{display:flex;flex-direction:column;gap:5px}
+  .pick .dis{opacity:.45;cursor:not-allowed}
+
+  .preview{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .pv-h{padding:14px 18px;border-bottom:1px solid var(--sep);display:flex;flex-direction:column;gap:4px}
+  .pv-h .mono{font-size:12px;color:var(--label-3);overflow-wrap:anywhere}
+  .pv-b{padding:18px;font-size:15px;color:var(--label-2);display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto}
+  .pv-b table{border-collapse:collapse;width:100%;font-size:13.5px}
+  .pv-b th,.pv-b td{text-align:left;padding:8px;border-bottom:1px solid var(--sep);vertical-align:top}
+  .pv-b th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--label-3);font-weight:600}
+  .sev-a{color:var(--red);font-weight:600}
+  .legal{font-size:13.5px;color:var(--label-2);background:var(--fill);border-radius:10px;padding:10px 12px}
+
+  .notice{border:0;border-radius:13px;padding:13px 15px;font-size:15px;color:var(--label)}
+  .notice.ok{background:var(--green-soft)} .notice.bad{background:var(--red-soft)} .notice.info{background:var(--orange-soft)}
+
+  .log{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .log > div{position:relative;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 14px}
+  .log > div + div::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--sep)}
+  .log .when{font-size:13px;color:var(--label-3)}
+  .empty{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:24px 22px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+  .pick .empty{box-shadow:none;background:transparent}
+  .empty p{color:var(--label-2)}
+
+  .signin{max-width:460px;margin:5vh auto 0}
+  .signin .panel{padding:26px}
+  dialog{border:0;border-radius:22px;padding:0;background:var(--card);color:var(--label);width:min(560px,94vw);
+         box-shadow:0 24px 70px rgba(0,0,0,.28)}
+  dialog::backdrop{background:rgba(0,0,0,.4)}
+
+  .tab[data-view="alerts"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16v-5a6 6 0 1 1 12 0v5l1.6 2.2H4.4z'/%3E%3Cpath d='M10 20.6a2 2 0 0 0 4 0'/%3E%3C/svg%3E")}
+  .tab[data-view="places"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3v5a2 2 0 0 0 4 0V3'/%3E%3Cpath d='M7 3v18'/%3E%3Cpath d='M17 21V3c-2.2 1.4-3.2 4-3.2 7.2V13H17'/%3E%3C/svg%3E")}
+  .block{display:flex;flex-direction:column;gap:12px;margin-bottom:34px}
+  .block-h{display:flex;flex-direction:column;gap:3px}
+  .verdict{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--fill)}
   .verdict.hit{background:var(--red-soft)} .verdict.clear{background:var(--green-soft)}
-  .v-num{font-size:44px;font-weight:800;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .v-num{font-size:38px;font-weight:800;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
   .verdict.hit .v-num{color:var(--red)} .verdict.clear .v-num{color:var(--green)}
-  .v-txt{font-size:16px;color:var(--label-2);max-width:48ch;flex:1;min-width:200px}
+  .v-txt{font-size:15.5px;color:var(--label-2);flex:1;min-width:200px}
   .v-txt strong{color:var(--label)}
-
   .rows{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
-  .tool .rows{box-shadow:none;background:var(--inset);border-radius:14px}
   .row{position:relative;display:grid;grid-template-columns:1fr auto;gap:6px 14px;padding:14px 16px;align-items:start}
   .row + .row::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--sep)}
   .row.match{background:var(--red-soft)}
@@ -97,468 +165,608 @@
   .row.match .row-t::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:.12em}
   .row-m{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--label-3)}
   .row-m a{color:var(--blue);text-decoration:none}
-  .toks{display:flex;flex-wrap:wrap;gap:5px;justify-self:end}
-  @media (max-width:620px){.row{grid-template-columns:1fr}.toks{justify-self:start}}
-
-  .figure{display:grid;grid-template-columns:auto 1fr;gap:8px 22px;align-items:center;background:var(--card);border-radius:22px;
-          padding:22px 24px;margin-top:16px;box-shadow:var(--shadow)}
-  .stat-n{font-size:clamp(46px,8vw,62px);font-weight:800;line-height:1;letter-spacing:-.045em;font-variant-numeric:tabular-nums;
-          background:linear-gradient(135deg,var(--orange),var(--red) 55%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .stat-b{font-size:16px;color:var(--label-2)}
-  .stat-b em{font-style:normal;color:var(--label);font-weight:600}
-  @media (max-width:560px){.figure{grid-template-columns:1fr}}
-
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-  .step{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
-  .step .n{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:999px;color:#fff;background:var(--blue)}
-  .step:nth-child(2) .n{background:var(--indigo)} .step:nth-child(3) .n{background:var(--green)}
-  .step p{font-size:15px;color:var(--label-2)}
-  @media (max-width:760px){.steps{grid-template-columns:1fr}}
-
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-  .card{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
-  .card-sub{font-size:14px;color:var(--label-3)}
+  .row-m .hitwho{color:var(--red);font-weight:600}
+  .row > .toks{justify-self:end}
+  .exp{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .exp-card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+  .exp-card .big{font-size:21px;font-weight:700;letter-spacing:-.02em}
+  .exp-card.ok .big{color:var(--green)} .exp-card.soon .big{color:var(--orange)} .exp-card.bad .big{color:var(--red)} .exp-card.none .big{color:var(--label-3)}
+  .venues{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .venue{padding:18px;display:flex;flex-direction:column;gap:10px}
+  .venue .sub{font-size:14px;color:var(--label-3)}
   .prep{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--label-2)}
   .dot{width:9px;height:9px;border-radius:50%;flex:none}
   .dot.good{background:var(--green)} .dot.mid{background:var(--orange)} .dot.low{background:var(--gray)}
-  .card-note{font-size:14.5px;color:var(--label-2)}
-  .card-foot{padding-top:10px;border-top:1px solid var(--sep);font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--label-3)}
-
-  .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
-  .btn-note{font-size:14px;color:var(--label-3)}
-  .state{background:var(--card);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-  .state p{font-size:15px;color:var(--label-2)}
-  .warn{background:var(--orange-soft);border-radius:16px;padding:14px 16px;font-size:15px;margin-top:16px;color:var(--label-2)}
+  .venue .foot{padding-top:10px;border-top:1px solid var(--sep);font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--label-3)}
+  .warn{background:var(--orange-soft);border-radius:14px;padding:12px 14px;font-size:14.5px;color:var(--label-2)}
   .warn strong{color:var(--label)}
-
-  .film{background:var(--card);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-  .film-frame{position:relative;aspect-ratio:16/9;background:#000}
-  .film-frame iframe,.film-frame video{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .film-cap{padding:14px 18px;font-size:14.5px;color:var(--label-2);display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
-  .film-cap .mono{font-size:12px;color:var(--label-3)}
-
-  footer{padding:32px 0 0;margin-top:52px;border-top:1px solid var(--sep);display:flex;flex-direction:column;gap:14px}
-  footer p{font-size:13.5px;color:var(--label-3);max-width:76ch}
-  .foot-links{display:flex;flex-wrap:wrap;gap:18px;font-size:15px}
-  footer a{color:var(--blue);text-decoration:none}
+  @media (max-width:620px){.row{grid-template-columns:1fr}.row > .toks{justify-self:start}}
+  .feats{display:flex;flex-direction:column;gap:14px;margin:4px 0 2px}
+  .feat{display:grid;grid-template-columns:40px 1fr;column-gap:12px;row-gap:2px;align-items:start}
+  .feat i{grid-column:1;grid-row:1 / span 2;position:relative;width:40px;height:40px;border-radius:11px;background:var(--c)}
+  .feat i::after{content:"";position:absolute;inset:0;background:#fff;
+          -webkit-mask:var(--icon) center/22px no-repeat;mask:var(--icon) center/22px no-repeat}
+  .feat b{grid-column:2;grid-row:1;font-size:15.5px;font-weight:600;line-height:1.3}
+  .feat span{grid-column:2;grid-row:2;font-size:14px;color:var(--label-3)}
+  .feat.f1{--c:var(--red);--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16v-5a6 6 0 1 1 12 0v5l1.6 2.2H4.4z'/%3E%3Cpath d='M10 20.6a2 2 0 0 0 4 0'/%3E%3C/svg%3E")}
+  .feat.f2{--c:var(--orange);--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2.5' width='6' height='13' rx='2'/%3E%3Cpath d='M12 15.5V21'/%3E%3Cpath d='M10 6h4'/%3E%3C/svg%3E")}
+  .feat.f3{--c:var(--blue);--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.5 2.5 10.6 13.4'/%3E%3Cpath d='M21.5 2.5 14.6 21.5l-4-8.1-8.1-4z'/%3E%3C/svg%3E")}
+  .site-foot{max-width:1000px;margin:0 auto;padding:6px 20px 40px;display:flex;flex-direction:column;gap:10px}
+  .site-foot p{font-size:12.5px;color:var(--label-3);max-width:80ch;line-height:1.5}
+  .site-foot nav{display:flex;flex-wrap:wrap;gap:16px;font-size:14px}
+  .site-foot a{color:var(--blue);text-decoration:none}
+  @media (max-width:720px){
+    .site-foot{padding:6px 16px 120px}
+    /* a blurred header becomes the containing block for position:fixed children,
+       which pinned the tab bar to the header instead of the screen */
+    .top{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--card)}
+    .seg{flex-wrap:nowrap}
+    .seg button{min-width:0;padding:9px 2px;font-size:13.5px}
+    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;margin:0;border-radius:0;gap:0;
+          padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:var(--nav);border-top:1px solid var(--sep);
+          -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+    .tab{flex:1;flex-direction:column;gap:3px;padding:5px 2px;font-size:10.5px;font-weight:500;color:var(--label-3);
+         background:transparent!important;box-shadow:none!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tab::before{width:25px;height:25px}
+    .tab[aria-selected="true"]{color:var(--blue)}
+    .who{width:100%;justify-content:space-between}
+    main{padding:22px 16px 118px}
+    dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:22px 22px 0 0;max-height:92vh}
+  }
   /* allergen identity colours — the same allergen is the same colour everywhere */
   :is(.chip,.tok)[data-a="peanuts"]{--c:var(--orange)} :is(.chip,.tok)[data-a="tree nuts"]{--c:var(--brown)} :is(.chip,.tok)[data-a="milk"]{--c:var(--blue)}
   :is(.chip,.tok)[data-a="egg"]{--c:var(--gold)} :is(.chip,.tok)[data-a="soy"]{--c:var(--green)} :is(.chip,.tok)[data-a="wheat/gluten"]{--c:#B7791F}
   :is(.chip,.tok)[data-a="sesame"]{--c:var(--teal)} :is(.chip,.tok)[data-a="fish"]{--c:var(--indigo)} :is(.chip,.tok)[data-a="shellfish"]{--c:var(--pink)}
   :is(.chip,.tok)[data-a="lupin"]{--c:var(--purple)} :is(.chip,.tok)[data-a="sulphites"]{--c:var(--gray)}
 </style>
+</head>
+<body>
 
-<div class="wrap">
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="./">AllerGreat</a>
+    <nav class="tabs" id="tabs" hidden role="tablist">
+      <button class="tab" role="tab" data-view="alerts" aria-selected="true">Alerts</button>
+      <button class="tab" role="tab" data-view="people">Family</button>
+      <button class="tab" role="tab" data-view="send">Send</button>
+      <button class="tab" role="tab" data-view="sent">Sent</button>
+    </nav>
+    <div class="who" id="who" hidden><span id="whoName"></span><button class="link" id="signout">Sign out</button></div>
+  </div>
+</header>
 
-  <header class="top">
-    <div class="brand">
-      <span class="brand-mark">AllerGreat</span>
-      <a class="btn ghost" href="app.html" style="margin-left:auto;padding:7px 14px;font-size:13.5px">Open the app</a>
-      <span class="brand-tag">food recall &amp; medicine shortage alerts &middot; australia</span>
+<main>
+
+<!-- ─────────── SIGN IN ─────────── -->
+<section id="v-signin" class="signin">
+  <div class="panel pad stack">
+    <div class="stack" style="gap:8px">
+      <h1>Stop retyping your family's allergies.</h1>
+      <p class="lede">Save everyone once. Then send their details to any restaurant, childcare centre or school in a few taps.</p>
     </div>
-    <h1>Recalls are announced while you're asleep.</h1>
-    <p class="lede">
-      Pick your allergens below and see, right now, which of the most recent official
-      Australian recalls would have reached you &mdash; and which ones we'd have kept quiet about.
-    </p>
-  </header>
+    <div class="feats">
+      <div class="feat f1"><i></i><b>Recall alerts that are actually yours</b><span>Official FSANZ recalls and TGA shortages, matched to each person's allergies.</span></div>
+      <div class="feat f2"><i></i><b>Autoinjector expiry reminders</b><span>At 90, 60, 30 and 7 days — once each, never daily.</span></div>
+      <div class="feat f3"><i></i><b>One tap to brief a venue</b><span>A clear allergy email to a restaurant, childcare centre or school.</span></div>
+    </div>
+    <label class="f">Your name<input class="in" id="si-name" autocomplete="name" placeholder="Sam Taylor"></label>
+    <label class="f">Your email<input class="in" id="si-email" type="email" autocomplete="email" placeholder="you@example.com">
+      <span class="hint">Venues reply to this address. Your family's profiles are saved on this device.</span></label>
+    <div class="btns"><button class="btn" id="si-go">Sign in</button></div>
+    <p class="notice bad" id="si-err" hidden></p>
+  </div>
+</section>
 
-  <section style="border-top:0;padding-top:30px">
-    <div class="tool">
-      <div class="tool-head">
-        <h3>What would we have told you?</h3>
-        <p>Live data from the Food Standards Australia New Zealand recall feed. Nothing to sign up for.</p>
+<!-- ─────────── ALERTS ─────────── -->
+<section id="v-alerts" hidden>
+  <div class="head">
+    <h1>Alerts</h1>
+    <p class="lede">Official Australian food recalls and medicine shortages, checked against your family.</p>
+  </div>
+  <div id="alerts"></div>
+</section>
+
+<!-- ─────────── RESTAURANTS ─────────── -->
+<section id="v-places" hidden>
+  <div class="head">
+    <h1>Restaurants</h1>
+    <p class="lede">What each restaurant has told us its kitchen can do — in its own words.</p>
+  </div>
+  <div class="panel pad stack" style="margin-bottom:16px">
+    <label class="f">Search<input class="in" id="pl-q" placeholder="Name, suburb or cuisine"></label>
+    <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--label-2)">Who's coming</span><div class="chips" id="pl-who"></div></div>
+  </div>
+  <div id="places"></div>
+  <p class="warn" style="margin-top:16px"><strong>We never describe a venue as safe.</strong> Every listing is declared by the restaurant itself, not inspected by AllerGreat. Always confirm with staff before you order.</p>
+</section>
+
+<!-- ─────────── FAMILY ─────────── -->
+<section id="v-people" hidden>
+  <div class="head">
+    <h1>Your family</h1>
+    <p class="lede">Everyone whose allergies you manage. Add each child once — you'll pick who's coming each time you send.</p>
+  </div>
+  <div class="btns" style="margin-bottom:18px">
+    <button class="btn" id="add-person">Add a person</button>
+    <button class="btn ghost" id="sample" hidden>Load an example family</button>
+    <button class="btn ghost" id="alerts-all">Turn on recall alerts for everyone</button>
+  </div>
+  <p class="notice" id="alerts-msg" hidden style="margin-bottom:16px"></p>
+  <div id="people"></div>
+</section>
+
+<!-- ─────────── SEND ─────────── -->
+<section id="v-send" hidden>
+  <div class="head">
+    <h1>Send allergy details</h1>
+    <p class="lede">Choose where you're going and who's coming. We write the email; replies come straight to you.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel pad stack">
+      <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--ink-2)">Where to</span>
+        <div class="seg" id="vtype">
+          <button data-v="restaurant" aria-pressed="true">Restaurant</button>
+          <button data-v="childcare" aria-pressed="false">Childcare</button>
+          <button data-v="school" aria-pressed="false">School</button>
+          <button data-v="other" aria-pressed="false">Other</button>
+        </div></div>
+      <div class="row2">
+        <label class="f">Venue name<input class="in" id="s-vname" placeholder="Thai Garden"></label>
+        <label class="f"><span id="s-date-l">Visit date</span><input class="in" id="s-date" placeholder="Sat 20 Sep, 7pm"></label>
       </div>
-      <div class="tool-body">
-        <div class="picker" id="picker" role="group" aria-label="Select your allergens"></div>
-        <div id="verdict"></div>
-        <div id="recalls"></div>
+      <label class="f">Venue email<input class="in" id="s-vemail" type="email" placeholder="bookings@venue.com.au"></label>
+      <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--ink-2)">Who's coming</span>
+        <div class="pick" id="s-pick"></div></div>
+      <label class="f">Anything else they should know<span class="hint">Optional</span>
+        <textarea class="in" id="s-note" placeholder="Mia's reaction to peanuts was severe last year. We'd prefer a table away from the kitchen."></textarea></label>
+      <div class="btns"><button class="btn red" id="s-go">Send email</button><span class="hint" id="s-why"></span></div>
+      <p class="notice" id="s-msg" hidden></p>
+    </div>
+    <div class="stack" style="gap:8px">
+      <span class="hint" style="font-weight:600;color:var(--ink-2)">What the venue receives</span>
+      <div class="preview">
+        <div class="pv-h"><span class="mono" id="pv-to">To: —</span><h3 id="pv-subj">—</h3></div>
+        <div class="pv-b" id="pv-body"></div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="figure">
-      <span class="stat-n" id="bigstat">7<span style="font-size:24px;letter-spacing:0">/10</span></span>
-      <span class="stat-b">
-        Of the most recent Australian food recalls, <em id="bigtxt">seven in ten</em> were caused by
-        an allergen left off the label &mdash; peanut in chilli oil sold nationally, egg in banana
-        bread, milk in brioche rolls.
-      </span>
-    </div>
-  </section>
+<!-- ─────────── SENT ─────────── -->
+<section id="v-sent" hidden>
+  <div class="head">
+    <h1>Sent</h1>
+    <p class="lede">Every email you've sent from this device. A copy of each is in your inbox too.</p>
+  </div>
+  <div id="sent"></div>
+</section>
 
-  <section>
-    <div class="sec-head">
-      <span class="eyebrow" data-step="01">The problem</span>
-      <h2>Subscribing to every recall is the same as ignoring every recall.</h2>
-    </div>
-    <p>
-      You can subscribe to the government feed today. Then you get metal fragments, listeria,
-      mould, and ten allergens that have nothing to do with you. Within a month you stop reading
-      them &mdash; and the one that mattered arrives in a folder you've learned to skip.
-    </p>
-    <div class="steps">
-      <div class="step">
-        <span class="n">01</span><h3>You register once</h3>
-        <p>Tick your allergens, how severe your reaction is, and the autoinjector you carry.</p>
-      </div>
-      <div class="step">
-        <span class="n">02</span><h3>We read two official feeds</h3>
-        <p>Food recalls from FSANZ, medicine shortages from the TGA &mdash; including the names
-           allergens hide behind, like casein for milk.</p>
-      </div>
-      <div class="step">
-        <span class="n">03</span><h3>You hear from us only if it's yours</h3>
-        <p>Every email quotes the official notice word for word and links to the source.
-           Anaphylaxis gets a different email than a mild intolerance.</p>
-      </div>
-    </div>
-    <div class="btn-row">
-      <a class="btn" href="https://jaehyeok.app.n8n.cloud/form/allergy-profile" target="_blank" rel="noopener">
-        Register your allergies <span class="arw">&rarr;</span></a>
-      <a class="btn ghost" href="app.html">Open the family app <span class="arw">&rarr;</span></a>
-    </div>
-  </section>
+</main>
 
-  <section>
-    <div class="sec-head">
-      <span class="eyebrow" data-step="02">Medicine supply</span>
-      <h2>An autoinjector you can't replace is its own emergency.</h2>
-    </div>
-    <p style="margin-bottom:18px">
-      We watch the Therapeutic Goods Administration shortage feed too. Finding out at the pharmacy
-      counter is too late; finding out three weeks early means you can get a prescription changed.
-    </p>
-    <div class="steps" style="margin:0 0 18px">
-      <div class="step">
-        <span class="n">WATCHED FOR</span><h3>Every brand, not just yours</h3>
-        <p>Register an EpiPen and you still hear about an Anapen or generic adrenaline shortage
-           &mdash; because that is what a pharmacist would switch you to.</p>
-        <div class="toks" style="justify-self:start">
-          <span class="tok">EpiPen</span><span class="tok">EpiPen Jr</span><span class="tok">Anapen</span>
-          <span class="tok">Anapen Junior</span><span class="tok">adrenaline</span></div>
-      </div>
-      <div class="step">
-        <span class="n">EXPIRY</span><h3>Before it runs out in your bag</h3>
-        <p>An autoinjector lasts 12&ndash;18 months. Give us the date on the box and we remind you
-           at 90, 60, 30 and 7 days &mdash; once each, never daily.</p>
-      </div>
-      <div class="step">
-        <span class="n">SILENCE</span><h3>No news is checked news</h3>
-        <p>If nothing below involves an autoinjector, nobody who carries one heard from us.
-           That quiet is the product working.</p>
-      </div>
-    </div>
-    <div id="shortages"></div>
-  </section>
+<footer class="site-foot">
+  <nav>
+    <a href="https://www.foodstandards.gov.au/food-recalls" target="_blank" rel="noopener">FSANZ recalls ↗</a>
+    <a href="https://www.tga.gov.au/safety/shortages" target="_blank" rel="noopener">TGA shortages ↗</a>
+    <a href="https://jaehyeok.app.n8n.cloud/form/unsubscribe" target="_blank" rel="noopener">Unsubscribe from alerts</a>
+  </nav>
+  <p>AllerGreat is an alerting service, not medical advice, and not a substitute for reading the label or asking staff.
+     Alerts come from official Australian government data. If you are having a reaction, use your adrenaline autoinjector and call 000.</p>
+</footer>
 
-  <section>
-    <div class="sec-head">
-      <span class="eyebrow" data-step="03">Eating out</span>
-      <h2>Restaurants that have told us what their kitchen can do.</h2>
+<!-- person editor -->
+<dialog id="dlg">
+  <form method="dialog" class="pad stack" id="pform">
+    <h2 id="dlg-title">Add a person</h2>
+    <div class="row2">
+      <label class="f">Name<input class="in" id="p-name" required placeholder="Mia"></label>
+      <label class="f">Relationship &amp; age <span class="hint">Optional</span><input class="in" id="p-rel" placeholder="e.g. Daughter, age 6"></label>
     </div>
-    <p style="margin-bottom:18px">
-      Filter by the allergen you need accommodated. Every listing is written by the restaurant
-      itself &mdash; we don't guess from menus, because menus don't carry allergen information
-      in the first place.
-    </p>
-    <div class="picker" id="rpicker" role="group" aria-label="Filter restaurants by allergen"></div>
-    <div id="dir" style="margin-top:18px"></div>
-    <div class="warn">
-      <strong>We never describe a venue as safe.</strong>
-      These are declarations by the restaurant, not inspections by us. Always confirm with staff
-      before you order.
+    <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--ink-2)">Allergies</span><div class="chips" id="p-all"></div></div>
+    <div class="row2">
+      <label class="f">Reaction<select class="in" id="p-sev"><option value="anaphylaxis">Anaphylaxis</option><option value="severe" selected>Severe</option><option value="mild">Mild</option></select></label>
+      <label class="f">Autoinjector<select class="in" id="p-inj"><option value="">None</option><option>EpiPen</option><option>EpiPen Jr</option><option>Anapen</option><option>Anapen Junior</option></select></label>
     </div>
-    <div class="btn-row">
-      <a class="btn ghost" href="https://jaehyeok.app.n8n.cloud/form/restaurant" target="_blank" rel="noopener">
-        List your restaurant <span class="arw">&rarr;</span></a>
-      <span class="btn-note">Free during the pilot.</span>
-    </div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <span class="eyebrow" data-step="04">Start</span>
-      <h2>One form. Then you can forget about us.</h2>
-    </div>
-    <p>
-      That's the point. There's nothing to open and no feed to scroll. An app you have to remember
-      to check would recreate the exact problem we're solving.
-    </p>
-    <div class="btn-row">
-      <a class="btn" href="https://jaehyeok.app.n8n.cloud/form/allergy-profile" target="_blank" rel="noopener">
-        Register your allergies <span class="arw">&rarr;</span></a>
-      <a class="btn ghost" href="https://jaehyeok.app.n8n.cloud/form/unsubscribe" target="_blank" rel="noopener">
-        Unsubscribe</a>
-    </div>
-  </section>
-
-  <section id="watch" hidden>
-    <div class="sec-head">
-      <span class="eyebrow" data-step="05">See it run</span>
-      <h2>Ninety seconds, start to finish, on the real system.</h2>
-    </div>
-    <p style="margin-bottom:18px">
-      A signup, a live government recall, the email that lands &mdash; and the person with a
-      shellfish allergy whose phone stays silent, because nothing in that recall was theirs.
-    </p>
-    <div class="film">
-      <div class="film-frame" id="film"></div>
-      <div class="film-cap"><span>Recorded on the working automation, not a mock-up.</span>
-        <span class="mono">n8n &middot; FSANZ &middot; TGA &middot; Google Sheets &middot; Gmail</span></div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="foot-links">
-      <a href="https://www.foodstandards.gov.au/food-recalls" target="_blank" rel="noopener">FSANZ recall notices &nearr;</a>
-      <a href="https://www.tga.gov.au/safety/shortages" target="_blank" rel="noopener">TGA shortages &nearr;</a>
-      <a href="https://jaehyeok.app.n8n.cloud/form/unsubscribe" target="_blank" rel="noopener">Unsubscribe</a>
-    </div>
-    <p>
-      AllerGreat is an alerting service, not medical advice, and not a substitute for reading the
-      label. Alerts are generated from official Australian government data. Restaurant listings are
-      self-declared by each venue and are not verified by us. No personal allergy profile appears on
-      this page &mdash; yours lives in your inbox, not in a public URL. If you are having a reaction,
-      use your adrenaline autoinjector and call 000.
-    </p>
-  </footer>
-</div>
+    <label class="f">Autoinjector expiry <span class="hint">Optional — the month printed on the box</span><input class="in" id="p-exp" type="month" placeholder="2027-03"></label>
+    <label class="f">Notes for venues<textarea class="in" id="p-notes" placeholder="Also avoids anything cooked in shared fryer oil."></textarea></label>
+    <div class="btns"><button class="btn" value="save" id="p-save">Save</button><button class="btn ghost" value="cancel" formnovalidate>Cancel</button></div>
+  </form>
+</dialog>
 
 <script>
-/* ──────────────────────────────────────────────────────────
-   Reads the same tables the automation writes to, so what you
-   see here is exactly what the alerting engine is working from.
-
-   Only the two non-personal tabs are published. User profiles,
-   send logs and error logs stay private.
-
-   To publish a tab: Sheet → File → Share → Publish to web →
-   pick the tab → CSV → paste the URL below.
-   ────────────────────────────────────────────────────────── */
-const SHEET_ID = '1mJPKmqp3Ly0C6kC4gD7iYjaD9Vtytvzq3InJDE4X6e0';
-const PUB = { recalls:'', restaurants:'' };   // optional published-CSV overrides
-
-// headers=1 is not optional. Without it Google guesses how many
-// leading rows are header, and on an all-text tab like restaurants
-// it guesses wrong and eats real listings.
-const url = (tab, override) => override ||
-  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&headers=1`;
-
-/* ── Demo video ──────────────────────────────────────────────
-   Two ways, no other edits needed:
-     1. Paste a YouTube link (unlisted is fine) between the quotes, OR
-     2. Leave it empty and put a file called demo.mp4 in the same
-        folder as this page before you upload the folder.
-   With neither, the section stays hidden.                        */
-const DEMO_VIDEO = '';
-
-(function loadDemoVideo(){
-  const box = document.getElementById('film'), sec = document.getElementById('watch');
-  const yt = String(DEMO_VIDEO).match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
-  if (yt) {
-    box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + yt[1] +
-      '?rel=0" title="AllerGreat demo" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-    sec.hidden = false; return;
-  }
-  const file = DEMO_VIDEO && /\.(mp4|webm|mov)$/i.test(DEMO_VIDEO) ? DEMO_VIDEO : 'demo.mp4';
-  fetch(file, { method: 'HEAD' }).then(r => {
-    if (!r.ok) return;
-    box.innerHTML = '<video controls preload="metadata" playsinline src="' + file + '"></video>';
-    sec.hidden = false;
-  }).catch(() => {});
-})();
-
-const ALLERGENS = ['peanuts','tree nuts','milk','egg','soy','wheat/gluten',
-                   'sesame','fish','shellfish','lupin','sulphites'];
-
+const N8N = 'https://jaehyeok.app.n8n.cloud';
+const ALLERGENS = ['peanuts','tree nuts','milk','egg','soy','wheat/gluten','sesame','fish','shellfish','lupin','sulphites'];
+const SEV = { anaphylaxis:'Anaphylaxis risk (life-threatening)', severe:'Severe reaction', mild:'Mild reaction' };
 const $ = id => document.getElementById(id);
-let picked = new Set(), rPicked = new Set();
-let recalls = [], shortages = [], venues = [];
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim());
 
-function parseCSV(t){
-  const rows=[]; let row=[], cell='', q=false;
-  for(let i=0;i<t.length;i++){ const c=t[i];
-    if(q){ if(c==='"'&&t[i+1]==='"'){cell+='"';i++;} else if(c==='"'){q=false;} else cell+=c; }
-    else if(c==='"'){q=true;}
-    else if(c===','){row.push(cell);cell='';}
-    else if(c==='\n'){row.push(cell);rows.push(row);row=[];cell='';}
-    else if(c!=='\r'){cell+=c;}
+/* ── storage: per account, on this device ── */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let account = store.get('ag.account', null);
+const key = s => 'ag.' + s + '.' + (account ? account.email : '');
+let people = [], sent = [], editing = null;
+function load() { people = store.get(key('people'), []); sent = store.get(key('sent'), []); }
+function save() { store.set(key('people'), people); store.set(key('sent'), sent); }
+
+/* ── views ── */
+let currentView = 'signin';
+function show(view) {
+  currentView = view;
+  ['signin','alerts','places','people','send','sent'].forEach(v => $('v-' + v).hidden = v !== view);
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === view)));
+  if (view === 'alerts') renderAlerts();
+  if (view === 'places') renderPlaces();
+  if (view === 'people') renderPeople();
+  if (view === 'send') renderPick();
+  if (view === 'sent') renderSent();
+  window.scrollTo(0, 0);
+}
+function signedIn() {
+  $('tabs').hidden = false; $('who').hidden = false;
+  $('whoName').textContent = account.name + ' · ' + account.email;
+  load(); alertPick = null; placeFor = null; show('alerts'); loadData();
+}
+$('si-go').onclick = () => {
+  const name = $('si-name').value.trim(), email = $('si-email').value.trim().toLowerCase();
+  if (!name || !isEmail(email)) { $('si-err').hidden = false; $('si-err').textContent = 'Enter your name and a valid email address.'; return; }
+  account = { name, email }; store.set('ag.account', account); $('si-err').hidden = true; signedIn();
+};
+$('signout').onclick = () => { account = null; store.set('ag.account', null); $('tabs').hidden = true; $('who').hidden = true; show('signin'); };
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => show(t.dataset.view));
+
+/* ── family ── */
+function renderPeople() {
+  $('sample').hidden = people.length > 0;
+  if (!people.length) {
+    $('people').innerHTML = `<div class="empty"><h3>No one added yet</h3>
+      <p>Add yourself if you have allergies, then each child or family member whose allergies you manage.</p></div>`;
+    return;
   }
-  if(cell!==''||row.length){row.push(cell);rows.push(row);}
+  $('people').innerHTML = `<div class="people">` + people.map((p, i) => `
+    <article class="panel person">
+      <div><h3>${esc(p.name)}</h3>${p.relation ? `<span class="rel">${esc(p.relation)}</span>` : ''}</div>
+      <div class="toks">${p.allergens.length ? p.allergens.map(a => `<span class="tok hot" data-a="${esc(a)}">${esc(a)}</span>`).join('') : '<span class="tok">no allergies listed</span>'}</div>
+      <p class="hint" style="color:var(--label-2)">${esc(SEV[p.severity])}${p.injector ? ' · carries ' + esc(p.injector) + (p.expiry ? ' (expires ' + esc(monthLabel(p.expiry)) + ')' : '') : ''}</p>
+      ${p.notes ? `<p class="hint">${esc(p.notes)}</p>` : ''}
+      <div class="person-foot"><button class="link" data-edit="${i}">Edit</button><button class="link" data-del="${i}">Remove</button></div>
+    </article>`).join('') + `</div>`;
+  document.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEditor(+b.dataset.edit));
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    if (confirm('Remove ' + people[+b.dataset.del].name + '?')) { people.splice(+b.dataset.del, 1); alertPick = null; placeFor = null; save(); renderPeople(); }
+  });
+}
+let draftAll = new Set();
+function openEditor(i) {
+  editing = i;
+  const p = i == null ? { name:'', relation:'', allergens:[], severity:'severe', injector:'', notes:'', expiry:'' } : people[i];
+  $('dlg-title').textContent = i == null ? 'Add a person' : 'Edit ' + p.name;
+  $('p-name').value = p.name; $('p-rel').value = p.relation; $('p-sev').value = p.severity;
+  $('p-inj').value = p.injector; $('p-notes').value = p.notes; $('p-exp').value = p.expiry || '';
+  draftAll = new Set(p.allergens);
+  $('p-all').innerHTML = ALLERGENS.map(a => `<button type="button" class="chip" aria-pressed="${draftAll.has(a)}" data-a="${esc(a)}">${esc(a)}</button>`).join('');
+  $('p-all').querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    const a = c.dataset.a; draftAll.has(a) ? draftAll.delete(a) : draftAll.add(a); c.setAttribute('aria-pressed', String(draftAll.has(a)));
+  });
+  $('dlg').showModal();
+}
+$('add-person').onclick = () => openEditor(null);
+$('pform').addEventListener('submit', e => {
+  if (e.submitter && e.submitter.value === 'cancel') return;
+  const name = $('p-name').value.trim();
+  if (!name) { e.preventDefault(); $('p-name').focus(); return; }
+  const p = { name, relation: $('p-rel').value.trim(), allergens: ALLERGENS.filter(a => draftAll.has(a)),
+              severity: $('p-sev').value, injector: $('p-inj').value, notes: $('p-notes').value.trim(), expiry: $('p-exp').value.trim() };
+  if (editing == null) people.push(p); else people[editing] = p;
+  alertPick = null; placeFor = null;
+  save(); renderPeople();
+});
+$('sample').onclick = () => {
+  people = [
+    { name:'Mia', relation:'Daughter, age 6', allergens:['peanuts','tree nuts'], severity:'anaphylaxis', injector:'EpiPen Jr', notes:'Reacts to traces — please avoid anything prepared near nuts.', expiry: sampleExpiry(140) },
+    { name:'Leo', relation:'Son, age 9', allergens:['milk','egg'], severity:'severe', injector:'', notes:'' }
+  ];
+  alertPick = null; placeFor = null;
+  save(); renderPeople();
+};
+
+/* recall alerts: register each person with the existing signup flow */
+$('alerts-all').onclick = async () => {
+  const msg = $('alerts-msg'), withAll = people.filter(p => p.allergens.length);
+  msg.hidden = false;
+  if (!withAll.length) { msg.className = 'notice info'; msg.textContent = 'Add at least one person with allergies first.'; return; }
+  msg.className = 'notice info'; msg.textContent = 'Turning on recall alerts…';
+  let ok = 0;
+  for (const p of withAll) {
+    const fd = new FormData();
+    fd.append('field-0', p.name + (p.relation ? ' (' + p.relation + ')' : ''));
+    fd.append('field-1', account.email);
+    fd.append('field-2', JSON.stringify(p.allergens));
+    fd.append('field-3', '');
+    fd.append('field-4', p.injector || 'none');
+    fd.append('field-5', p.injector && p.expiry ? p.expiry : '');
+    fd.append('field-6', '');
+    fd.append('field-7', p.severity);
+    fd.append('field-8', '');
+    try { const r = await fetch(N8N + '/form/allergy-profile', { method:'POST', body: fd }); if (r.ok) ok++; } catch (e) {}
+  }
+  msg.className = ok === withAll.length ? 'notice ok' : 'notice bad';
+  msg.textContent = ok === withAll.length
+    ? `Recall alerts are on for ${ok === 1 ? withAll[0].name : ok + ' people'}. Alerts go to ${account.email}, each addressed by name.`
+    : `Only ${ok} of ${withAll.length} could be registered. Check your connection and try again.`;
+};
+
+/* ── send ── */
+let vtype = 'restaurant';
+document.querySelectorAll('#vtype button').forEach(b => b.onclick = () => {
+  vtype = b.dataset.v;
+  document.querySelectorAll('#vtype button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  $('s-date-l').textContent = vtype === 'childcare' || vtype === 'school' ? 'Starting' : 'Visit date';
+  preview();
+});
+['s-vname','s-vemail','s-date','s-note'].forEach(id => $(id).addEventListener('input', preview));
+function renderPick() {
+  if (!people.length) {
+    $('s-pick').innerHTML = `<div class="empty" style="border:0"><p>No one in your family yet.</p>
+      <button class="btn ghost" onclick="show('people')">Add someone</button></div>`;
+  } else {
+    $('s-pick').innerHTML = people.map((p, i) => {
+      const usable = p.allergens.length || p.notes;
+      return `<label class="${usable ? '' : 'dis'}"><input type="checkbox" data-i="${i}" ${usable ? '' : 'disabled'} ${usable && p.allergens.length ? 'checked' : ''}>
+        <span class="meta"><b>${esc(p.name)}</b>${p.relation ? `<span class="hint">${esc(p.relation)}</span>` : ''}
+        <span class="toks">${p.allergens.map(a => `<span class="tok hot" data-a="${esc(a)}">${esc(a)}</span>`).join('') || '<span class="tok">no allergies — nothing to send</span>'}</span></span></label>`;
+    }).join('');
+    $('s-pick').querySelectorAll('input').forEach(c => c.onchange = preview);
+  }
+  preview();
+}
+const chosen = () => [...document.querySelectorAll('#s-pick input:checked')].map(c => people[+c.dataset.i]);
+
+/* mirrors the n8n "Build Enquiry" template so what you see is what they get */
+function preview() {
+  const ps = chosen(), n = ps.length, vname = $('s-vname').value.trim(), date = $('s-date').value.trim();
+  const names = ps.map(p => p.name), list = names.length <= 1 ? (names[0] || '') : names.slice(0, -1).join(', ') + ' and ' + names.at(-1);
+  const care = vtype === 'childcare' || vtype === 'school';
+  const subject = !n ? '—' : care
+    ? 'Allergy information for ' + list + (vname ? ' — ' + vname : '')
+    : 'Allergy information for ' + n + (n === 1 ? ' guest' : ' guests') + (date ? ' on ' + date : '') + (vname ? ' — ' + vname : '');
+  $('pv-to').textContent = 'To: ' + ($('s-vemail').value.trim() || '—') + '   ·   Reply-to: ' + (account ? account.email : '');
+  $('pv-subj').textContent = subject;
+  const venue = vname || (vtype === 'restaurant' ? 'your restaurant' : vtype === 'other' ? 'your venue' : 'your service');
+  const intro = care
+    ? `${esc(account.name)} is sending the allergy details for <b>${esc(list)}</b>, who ${n === 1 ? 'attends' : 'attend'} ${esc(venue)}${date ? ' from ' + esc(date) : ''}.`
+    : `${esc(account.name)} is planning to eat at ${esc(venue)}${date ? ' on <b>' + esc(date) + '</b>' : ''}. ${n === 1 ? 'One person' : n + ' people'} in the group ${n === 1 ? 'has' : 'have'} food allergies, listed below.`;
+  const asks = care
+    ? ['Please add these details to ' + (n === 1 ? 'their record' : 'their records') + ' and share them with every staff member who prepares food or supervises meals.',
+       'Please confirm a current ASCIA Action Plan is on file for anyone at risk of anaphylaxis.',
+       'Let us know if you need anything else from us — for example a spare adrenaline autoinjector.']
+    : ['Which dishes can be prepared safely for them?', 'How do you prevent cross-contact — shared fryers, surfaces or utensils?', 'Is there anything on the menu they should avoid entirely?'];
+  const note = $('s-note').value.trim();
+  $('pv-body').innerHTML = !n ? '<p>Tick at least one person to see the email.</p>' : `
+    <p>Hello ${esc(vname ? vname + ' team' : 'there')},</p><p>${intro}</p>
+    ${vtype === 'restaurant' ? '<p class="legal">Under the Food Standards Code, food businesses must give customers accurate allergen information when asked. Please only confirm what your kitchen can reliably do. A written reply helps this family plan safely.</p>' : ''}
+    <table><tr><th>Name</th><th>Allergies</th><th>Severity</th><th>Notes</th></tr>
+    ${ps.map(p => `<tr><td><b>${esc(p.name)}</b>${p.relation ? '<br><span class="hint">' + esc(p.relation) + '</span>' : ''}</td>
+      <td>${esc(p.allergens.join(', ') || '—')}</td>
+      <td class="${p.severity === 'anaphylaxis' ? 'sev-a' : ''}">${esc(SEV[p.severity])}${p.injector ? '<br><span class="hint">Carries ' + esc(p.injector) + '</span>' : ''}</td>
+      <td>${esc(p.notes)}</td></tr>`).join('')}</table>
+    ${note ? `<p><b>A note from ${esc(account.name)}:</b><br>${esc(note).replace(/\n/g, '<br>')}</p>` : ''}
+    <p><b>${care ? 'We would be grateful if you could:' : 'Could you let them know:'}</b></p>
+    <ul style="margin:0;padding-left:20px">${asks.map(a => '<li>' + a + '</li>').join('')}</ul>
+    <p><b>Just reply to this email</b> — your answer goes straight to ${esc(account.name)} at ${esc(account.email)}.</p>`;
+  const why = !n ? 'Tick at least one person.' : !isEmail($('s-vemail').value) ? 'Add the venue\'s email.' : '';
+  $('s-why').textContent = why; $('s-go').disabled = !!why;
+}
+$('s-go').onclick = async () => {
+  const ps = chosen(), vemail = $('s-vemail').value.trim(), vname = $('s-vname').value.trim(), msg = $('s-msg');
+  const fd = new FormData();
+  fd.append('field-0', account.name); fd.append('field-1', account.email); fd.append('field-2', vtype);
+  fd.append('field-3', vname); fd.append('field-4', vemail); fd.append('field-5', $('s-date').value.trim());
+  fd.append('field-6', $('s-note').value.trim());
+  fd.append('field-7', JSON.stringify(ps.map(p => ({ name: p.name, relation: p.relation, allergens: p.allergens, severity: p.severity, injector: p.injector, notes: p.notes }))));
+  $('s-go').disabled = true; $('s-go').textContent = 'Sending…'; msg.hidden = true;
+  try {
+    const r = await fetch(N8N + '/form/enquiry', { method: 'POST', body: fd });
+    if (!r.ok) throw new Error('The automation answered ' + r.status + '.');
+    sent.unshift({ at: new Date().toISOString(), vtype, vname, vemail, who: ps.map(p => p.name) }); save();
+    msg.className = 'notice ok'; msg.hidden = false;
+    msg.textContent = `Sent to ${vname || vemail}. A copy is on its way to ${account.email}, and their reply will come straight to you.`;
+    $('s-vname').value = ''; $('s-vemail').value = ''; $('s-date').value = ''; $('s-note').value = '';
+  } catch (e) {
+    msg.className = 'notice bad'; msg.hidden = false;
+    msg.textContent = 'Not sent. ' + (e.message && !/fetch/i.test(e.message) ? e.message : 'Couldn\'t reach the automation — check your connection and try again.');
+  }
+  $('s-go').textContent = 'Send email'; preview();
+};
+
+/* ── official data: the same sheet the automation writes to ── */
+const SHEET = 'https://docs.google.com/spreadsheets/d/1mJPKmqp3Ly0C6kC4gD7iYjaD9Vtytvzq3InJDE4X6e0/gviz/tq?tqx=out:csv&headers=1&sheet=';
+const INJ = /adrenalin|epinephrin|epipen|anapen|auto-?\s?injector/i;
+let data = { loaded: false, failed: false, recalls: [], shortages: [], venues: [] };
+let alertPick = null, placeFor = null, shownVenues = [];
+
+function parseCSV(t) {
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < t.length; i++) { const c = t[i];
+    if (q) { if (c === '"' && t[i + 1] === '"') { cell += '"'; i++; } else if (c === '"') q = false; else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+    else if (c !== '\r') cell += c;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
   return rows;
 }
-function toObjects(text){
-  const rows = parseCSV(text).filter(r=>r.some(c=>c.trim()));
-  if(rows.length<2) return [];
-  const head = rows[0].map(h=>h.trim().toLowerCase());
-  return rows.slice(1).map(r=>{
-    const o={}; head.forEach((h,i)=>{ if(h) o[h]=(r[i]||'').trim(); }); return o;
+function toObjects(text) {
+  const rows = parseCSV(text).filter(r => r.some(c => c.trim()));
+  if (rows.length < 2) return [];
+  const head = rows[0].map(h => h.trim().toLowerCase());
+  return rows.slice(1).map(r => { const o = {}; head.forEach((h, i) => { if (h) o[h] = (r[i] || '').trim(); }); return o; });
+}
+const fmtDate = s => { const d = new Date(s); return isNaN(d) ? '' : d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }); };
+function monthLabel(ym) { const m = String(ym || '').match(/^(\d{4})-(\d{1,2})/); return m ? new Date(+m[1], +m[2] - 1, 1).toLocaleDateString('en-AU', { month:'short', year:'numeric' }) : ym; }
+function daysUntil(ym) { const m = String(ym || '').match(/^(\d{4})-(\d{1,2})/); if (!m) return null; const t = new Date(); t.setHours(0,0,0,0); return Math.round((new Date(+m[1], +m[2] - 1, 28) - t) / 86400000); }
+function sampleExpiry(days) { const d = new Date(); d.setDate(d.getDate() + days); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+const tok = (a, on) => `<span class="tok${on ? ' on' : ''}" data-a="${esc(a)}">${esc(a)}</span>`;
+
+async function loadData(force) {
+  if (data.loaded && !force) return;
+  data.failed = false;
+  try {
+    const get = t => fetch(SHEET + t).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+    const [pr, rs] = await Promise.all([get('processed_recalls'), get('restaurants')]);
+    const rows = toObjects(pr).filter(r => r.title);
+    data.recalls = rows.filter(r => r.source !== 'tga' && r.allergen_list).map(r => ({ title: r.title, link: r.link, published: r.published,
+      allergens: r.allergen_list.split(',').map(x => x.trim().toLowerCase()).filter(Boolean) }));
+    data.shortages = rows.filter(r => r.source === 'tga').map(r => ({ title: r.title, link: r.link, published: r.published, processed_at: r.processed_at }));
+    data.venues = toObjects(rs).filter(r => r.name && !/^\s*QA TEST/i.test(r.name) && !/example\.com$/i.test(r.contact_email || '')).map(r => ({
+      name: r.name, suburb: r.suburb, cuisine: r.cuisine, prep: r.prep_area, notes: r.notes, email: r.contact_email, registered: r.registered_at,
+      accommodates: (r.allergens_accommodated || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean) }));
+    data.loaded = true;
+  } catch (e) { data.failed = true; }
+  if (currentView === 'alerts') renderAlerts();
+  if (currentView === 'places') renderPlaces();
+}
+function loadingState(box) {
+  box.innerHTML = data.failed
+    ? `<div class="empty"><h3>Couldn't load the official data</h3><p>Check your connection and try again.</p><button class="btn ghost" onclick="loadData(true)">Try again</button></div>`
+    : `<div class="empty"><p>Loading official recalls, medicine alerts and restaurant listings…</p></div>`;
+}
+
+/* ── alerts ── */
+function renderAlerts() {
+  const box = $('alerts');
+  if (!data.loaded) { loadingState(box); return; }
+  if (alertPick === null) alertPick = new Set(people.flatMap(p => p.allergens));
+  const fam = new Set(people.flatMap(p => p.allergens));
+
+  // 1 · food recalls
+  const hits = data.recalls.filter(r => r.allergens.some(a => alertPick.has(a)));
+  const names = [...alertPick].join(', ');
+  const verdict = !alertPick.size
+    ? `<div class="verdict"><span class="v-num">${data.recalls.length}</span><span class="v-txt">recent allergen recalls on file. <strong>Tick allergens above</strong>${people.length ? '' : ', or add your family,'} to see which affect you.</span></div>`
+    : hits.length
+      ? `<div class="verdict hit"><span class="v-num">${hits.length}</span><span class="v-txt">of ${data.recalls.length} recent recalls involve <strong>${esc(names)}</strong>. Each would have reached you as an email quoting the official notice.</span></div>`
+      : `<div class="verdict clear"><span class="v-num">0</span><span class="v-txt">of ${data.recalls.length} recent recalls involve <strong>${esc(names)}</strong>. You'd have heard nothing from us — that silence is the product.</span></div>`;
+  // Nothing picked: every recall. Something picked: only the ones that involve it.
+  const shownRecalls = alertPick.size ? hits : data.recalls;
+  const recallRows = shownRecalls.map(r => {
+    const who = people.filter(p => p.allergens.some(a => r.allergens.includes(a))).map(p => p.name);
+    return `<div class="row"><span class="row-t">${esc(r.title)}</span>
+      <span class="toks">${r.allergens.map(a => tok(a, alertPick.has(a))).join('')}</span>
+      <span class="row-m">${who.length ? `<span class="hitwho">Affects ${esc(who.join(', '))}</span> ·` : ''} ${esc(fmtDate(r.published))}
+        ${r.link ? `· <a href="${esc(r.link)}" target="_blank" rel="noopener">official notice ↗</a>` : ''}</span></div>`;
+  }).join('');
+
+  // 2 · autoinjectors: expiry + TGA shortages
+  const carriers = people.filter(p => p.injector);
+  const expCards = carriers.map((p, i) => {
+    const d = daysUntil(p.expiry);
+    const cls = d === null ? 'none' : d < 0 ? 'bad' : d <= 30 ? 'soon' : 'ok';
+    const big = d === null ? 'No expiry date' : d < 0 ? 'Expired' : d === 0 ? 'Expires today' : `${d} days left`;
+    const sub = d === null ? `Add the date on the box and we'll remind you at 90, 60, 30 and 7 days.` : `${esc(p.injector)} · expires ${esc(monthLabel(p.expiry))}`;
+    return `<div class="exp-card ${cls}"><b>${esc(p.name)}</b><span class="big">${big}</span><span class="hint">${sub}</span>
+      ${d === null || d <= 30 ? `<button class="link" style="align-self:flex-start" data-editp="${people.indexOf(p)}">${d === null ? 'Add expiry date' : 'Update after replacing'}</button>` : ''}</div>`;
+  }).join('');
+  const inj = data.shortages.filter(x => INJ.test(x.title));
+  const last = data.shortages.map(x => Date.parse(x.processed_at)).filter(Boolean).sort((a, b) => b - a)[0];
+  const shortVerdict = !data.shortages.length
+    ? `<div class="empty"><h3>Today's medicine check hasn't run yet</h3><p>It reads every current TGA shortage alert and flags anything involving an adrenaline autoinjector.</p></div>`
+    : inj.length
+      ? `<div class="verdict hit"><span class="v-num">${inj.length}</span><span class="v-txt">of ${data.shortages.length} current TGA shortage alerts involve an <strong>adrenaline autoinjector</strong>.${carriers.length ? ' Your family carries one — you have been emailed.' : ''}</span></div>`
+      : `<div class="verdict clear"><span class="v-num">0</span><span class="v-txt">of ${data.shortages.length} current TGA shortage alerts involve an adrenaline autoinjector${last ? ' — checked ' + esc(new Date(last).toLocaleString('en-AU', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' })) : ''}.${carriers.length ? ' <strong>Nothing affects ' + esc(carriers.map(p => p.name).join(', ')) + '.</strong>' : ''}</span></div>`;
+  const shortRows = [...inj, ...data.shortages.filter(x => !INJ.test(x.title))].map(x => `
+    <div class="row${INJ.test(x.title) ? ' match' : ''}"><span class="row-t">${esc(x.title)}</span>
+      <span class="toks"><span class="tok ${INJ.test(x.title) ? 'on' : 'ok'}">${INJ.test(x.title) ? 'AUTOINJECTOR' : 'TGA'}</span></span>
+      <span class="row-m">${esc(fmtDate(x.published))} ${x.link ? `· <a href="${esc(x.link)}" target="_blank" rel="noopener">official alert ↗</a>` : ''}</span></div>`).join('');
+
+  box.innerHTML = `
+    <div class="block">
+      <div class="block-h"><h2>Food recalls</h2><span class="hint">From the Food Standards Australia New Zealand recall feed. AllerGreat checks it every hour.</span></div>
+      <div class="chips" id="al-chips">${ALLERGENS.map(a => `<button type="button" class="chip" data-a="${esc(a)}" aria-pressed="${alertPick.has(a)}">${esc(a)}</button>`).join('')}</div>
+      ${people.length && fam.size ? `<span class="hint">Pre-selected from your family's allergies. Tap to change.</span>` : ''}
+      ${verdict}
+      ${!data.recalls.length ? `<div class="empty"><p>No allergen recalls on file right now.</p></div>` : shownRecalls.length ? `<div class="rows">${recallRows}</div>` : ''}
+    </div>
+    <div class="block">
+      <div class="block-h"><h2>Autoinjectors & medicines</h2><span class="hint">Expiry reminders for your family, and shortage alerts from the Therapeutic Goods Administration.</span></div>
+      ${carriers.length ? `<div class="exp">${expCards}</div>` : `<div class="empty"><p>Nobody in your family has an autoinjector saved. Add one in Family to get expiry reminders.</p><button class="btn ghost" onclick="show('people')">Open Family</button></div>`}
+      ${shortVerdict}
+      ${data.shortages.length ? `<div class="rows">${shortRows}</div>` : ''}
+    </div>`;
+  box.querySelectorAll('#al-chips .chip').forEach(c => c.onclick = () => {
+    const a = c.dataset.a; alertPick.has(a) ? alertPick.delete(a) : alertPick.add(a); renderAlerts();
   });
-}
-const esc = s => String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fmt = s => { const d=new Date(s); return isNaN(d)?'':d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); };
-
-function makePicker(box, set, onChange){
-  ALLERGENS.forEach(a=>{
-    const b=document.createElement('button');
-    b.className='chip'; b.type='button'; b.textContent=a; b.dataset.a=a; b.setAttribute('aria-pressed','false');
-    b.addEventListener('click',()=>{
-      const on=b.getAttribute('aria-pressed')==='true';
-      b.setAttribute('aria-pressed',String(!on));
-      on?set.delete(a):set.add(a); onChange();
-    });
-    box.appendChild(b);
-  });
-}
-
-/* ── the checker ── */
-function renderRecalls(){
-  if(!recalls.length){
-    $('verdict').innerHTML='';
-    $('recalls').innerHTML=`<div class="state"><p>Recall history hasn't loaded yet. The alerting
-      engine still runs &mdash; this page is just the window onto it.</p></div>`;
-    return;
-  }
-  const matched = recalls.filter(r => [...picked].some(a => r.allergens.includes(a)));
-  const n = matched.length, total = recalls.length;
-
-  let cls, num, txt;
-  if(!picked.size){
-    cls=''; num=total;
-    txt=`recent allergen recalls on file. <strong>Pick your allergens above</strong> to see which
-         of them would have reached you.`;
-  } else if(n===0){
-    cls='clear'; num=0;
-    txt=`of these ${total} recalls involve <strong>${esc([...picked].join(', '))}</strong>.
-         You'd have heard nothing from us &mdash; and that silence is the product.`;
-  } else {
-    cls='hit'; num=n;
-    txt=`of these ${total} recalls involve <strong>${esc([...picked].join(', '))}</strong>.
-         Each one would have arrived as an email quoting the official notice.`;
-  }
-  $('verdict').innerHTML=`<div class="verdict ${cls}"><span class="v-num">${num}</span>
-    <span class="v-txt">${txt}</span></div>`;
-
-  // Nothing picked: show every recall. Something picked: show only the
-  // recalls that involve it — the verdict above already says how many.
-  const list = picked.size ? matched : recalls;
-  if(!list.length){ $('recalls').innerHTML=''; return; }
-  $('recalls').innerHTML=`<div class="rows">` + list.map(r=>{
-    return `<div class="row">
-      <span class="row-t">${esc(r.title)}</span>
-      <span class="toks">${r.allergens.map(a=>
-        `<span class="tok${picked.has(a)?' on':''}" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</span>
-      <span class="row-m">${esc(fmt(r.published))}
-        ${r.link?`&middot; <a href="${esc(r.link)}" target="_blank" rel="noopener">official notice &nearr;</a>`:''}
-      </span></div>`;
-  }).join('')+`</div>`;
-}
-
-/* ── TGA shortages ──
-   The TGA feed sends no CORS headers, so the browser cannot read it
-   directly. The automation reads it and writes each alert to the
-   sheet; this page shows exactly what the automation saw.          */
-const INJ = /adrenalin|epinephrin|epipen|anapen|auto-?\s?injector/i;
-function renderShortages(){
-  if(!shortages.length){
-    $('shortages').innerHTML=`<div class="state">
-      <h3>The morning medicine check hasn't written today's results yet</h3>
-      <p>It reads every current TGA shortage alert and flags anything involving an adrenaline
-         autoinjector. Results appear here as soon as it runs.</p></div>`;
-    return;
-  }
-  const inj = shortages.filter(s => INJ.test(s.title));
-  const last = shortages.map(s => Date.parse(s.processed_at)).filter(Boolean).sort((a,b)=>b-a)[0];
-  const checked = last ? new Date(last).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}) : '';
-  const verdict = inj.length
-    ? `<div class="verdict hit"><span class="v-num">${inj.length}</span><span class="v-txt">of
-         ${shortages.length} current TGA shortage alerts involve an <strong>adrenaline autoinjector</strong>.
-         Everyone who registered one has been emailed.</span></div>`
-    : `<div class="verdict clear"><span class="v-num">0</span><span class="v-txt">of
-         ${shortages.length} current TGA shortage alerts involve an adrenaline autoinjector.
-         <strong>Nobody who carries one was emailed</strong>${checked ? ' &mdash; checked ' + esc(checked) : ''}.</span></div>`;
-  const list = [...inj, ...shortages.filter(s => !INJ.test(s.title))];
-  $('shortages').innerHTML = verdict + `<div class="rows" style="margin-top:14px">` + list.map(s=>`
-    <div class="row${INJ.test(s.title)?' match':''}">
-      <span class="row-t">${esc(s.title)}</span>
-      <span class="toks"><span class="tok ${INJ.test(s.title)?'on':'ok'}">${INJ.test(s.title)?'AUTOINJECTOR':'TGA'}</span></span>
-      <span class="row-m">${esc(fmt(s.published))}
-        ${s.link?`&middot; <a href="${esc(s.link)}" target="_blank" rel="noopener">official alert &nearr;</a>`:''}
-      </span></div>`).join('')+`</div>`;
+  box.querySelectorAll('[data-editp]').forEach(b => b.onclick = () => { show('people'); openEditor(+b.dataset.editp); });
 }
 
 /* ── restaurants ── */
-function prep(s){
-  const t=(s||'').toLowerCase();
-  if(t.includes('dedicated')) return ['good','Dedicated preparation area'];
-  if(t.includes('shared'))    return ['mid','Shared area, cleaned between orders'];
-  if(t.includes('no'))        return ['low','No separate preparation area'];
-  return ['low','Preparation area not stated'];
+function prepInfo(t) {
+  t = (t || '').toLowerCase();
+  if (t.includes('dedicated')) return ['good', 'Dedicated preparation area'];
+  if (t.includes('shared')) return ['mid', 'Shared area, cleaned between orders'];
+  if (t.includes('no')) return ['low', 'No separate preparation area'];
+  return ['low', 'Preparation area not stated'];
 }
-function renderVenues(){
-  const shown = venues.filter(v=>[...rPicked].every(a=>v.accommodates.includes(a)));
-  if(!venues.length){
-    $('dir').innerHTML=`<div class="state">
-      <h3>No restaurants listed yet</h3>
-      <p>This directory fills as venues register. Nothing here is scraped &mdash; every entry is
-         written by the restaurant, which is the only way allergen information stays current.</p>
-      <a class="btn ghost" href="https://jaehyeok.app.n8n.cloud/form/restaurant" target="_blank"
-         rel="noopener">List the first one <span class="arw">&rarr;</span></a></div>`;
+function renderPlaces() {
+  const box = $('places');
+  if (placeFor === null) placeFor = new Set(people.map((p, i) => i).filter(i => people[i].allergens.length));
+  $('pl-who').innerHTML = people.length
+    ? people.map((p, i) => `<button type="button" class="chip" data-i="${i}" aria-pressed="${placeFor.has(i)}">${esc(p.name)}</button>`).join('')
+    : `<span class="hint">Add your family to filter by who's coming.</span>`;
+  $('pl-who').querySelectorAll('.chip').forEach(c => c.onclick = () => { const i = +c.dataset.i; placeFor.has(i) ? placeFor.delete(i) : placeFor.add(i); renderPlaces(); });
+  if (!data.loaded) { loadingState(box); return; }
+  const need = [...new Set([...placeFor].flatMap(i => people[i] ? people[i].allergens : []))];
+  const q = $('pl-q').value.trim().toLowerCase();
+  shownVenues = data.venues.filter(v => need.every(a => v.accommodates.includes(a)) &&
+    (!q || [v.name, v.suburb, v.cuisine].join(' ').toLowerCase().includes(q)));
+  if (!data.venues.length) {
+    box.innerHTML = `<div class="empty"><h3>No restaurants have listed yet</h3>
+      <p>Every enquiry you send invites that restaurant to list here — so the directory grows each time a family asks.</p>
+      <button class="btn" onclick="show('send')">Ask a restaurant</button></div>`;
     return;
   }
-  if(!shown.length){
-    $('dir').innerHTML=`<div class="state"><h3>Nothing matches all of those yet</h3>
-      <p>No listed venue has declared it can accommodate
-         <strong>${esc([...rPicked].join(', '))}</strong> together. Try removing one.</p></div>`;
+  if (!shownVenues.length) {
+    box.innerHTML = `<div class="empty"><h3>No listed restaurant matches yet</h3>
+      <p>${need.length ? `None has declared it can handle <strong>${esc(need.join(', '))}</strong>${q ? ' and matches “' + esc(q) + '”' : ''}.` : `Nothing matches “${esc(q)}”.`} You can still ask a restaurant directly.</p>
+      <button class="btn" onclick="show('send')">Ask a restaurant</button></div>`;
     return;
   }
-  $('dir').innerHTML=`<div class="grid">` + shown.map(v=>{
-    const [c,label]=prep(v.prep);
-    return `<article class="card">
-      <div><h3>${esc(v.name)}</h3>
-        <span class="card-sub">${esc(v.suburb)}${v.cuisine?' &middot; '+esc(v.cuisine):''}</span></div>
-      <div class="toks" style="justify-self:start">${v.accommodates.map(a=>
-        `<span class="tok${rPicked.has(a)?' on':''}" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</div>
-      <div class="prep"><span class="dot ${c}"></span>${esc(label)}</div>
-      ${v.notes?`<p class="card-note">&ldquo;${esc(v.notes)}&rdquo;</p>`:''}
-      <div class="card-foot">SELF-DECLARED BY RESTAURANT &middot; CONFIRM WITH STAFF</div>
-    </article>`;
-  }).join('')+`</div>`;
+  box.innerHTML = `<p class="hint" style="margin-bottom:10px">${shownVenues.length} of ${data.venues.length} listed restaurants${need.length ? ' can accommodate everyone selected' : ''}.</p>
+    <div class="venues">` + shownVenues.map((v, i) => {
+      const [c, label] = prepInfo(v.prep);
+      return `<article class="panel venue">
+        <div><h3>${esc(v.name)}</h3><span class="sub">${esc(v.suburb)}${v.cuisine ? ' · ' + esc(v.cuisine) : ''}</span></div>
+        <div class="toks">${v.accommodates.map(a => tok(a, need.includes(a))).join('') || '<span class="tok">no allergens declared</span>'}</div>
+        <div class="prep"><span class="dot ${c}"></span>${esc(label)}</div>
+        ${v.notes ? `<p class="hint" style="color:var(--label-2)">“${esc(v.notes)}”</p>` : ''}
+        ${v.email ? `<button class="btn ghost" data-ask="${i}">Ask about ${placeFor.size === 1 ? esc(people[[...placeFor][0]].name) : 'your family'}</button>` : ''}
+        <div class="foot">DECLARED BY THE RESTAURANT${v.registered ? ' · ' + esc(fmtDate(v.registered).toUpperCase()) : ''} · CONFIRM WITH STAFF</div>
+      </article>`;
+    }).join('') + `</div>`;
+  box.querySelectorAll('[data-ask]').forEach(b => b.onclick = () => askVenue(+b.dataset.ask));
+}
+$('pl-q').addEventListener('input', renderPlaces);
+function askVenue(i) {
+  const v = shownVenues[i], who = new Set(placeFor);
+  show('send');
+  document.querySelector('#vtype [data-v="restaurant"]').click();
+  $('s-vname').value = v.name; $('s-vemail').value = v.email || '';
+  document.querySelectorAll('#s-pick input').forEach(c => { if (!c.disabled) c.checked = who.has(+c.dataset.i); });
+  preview();
 }
 
-makePicker($('picker'), picked, renderRecalls);
-makePicker($('rpicker'), rPicked, renderVenues);
-$('recalls').innerHTML=`<div class="state"><p>Loading the recall feed&hellip;</p></div>`;
-$('shortages').innerHTML=`<div class="state"><p>Loading shortage alerts&hellip;</p></div>`;
-$('dir').innerHTML=`<div class="state"><p>Loading listings&hellip;</p></div>`;
+/* ── sent ── */
+function renderSent() {
+  if (!sent.length) { $('sent').innerHTML = `<div class="empty"><h3>Nothing sent yet</h3><p>Emails you send to venues appear here.</p></div>`; return; }
+  $('sent').innerHTML = `<div class="log">` + sent.map(s => `<div>
+    <b>${esc(s.vname || s.vemail)}</b><span class="when">${esc(new Date(s.at).toLocaleString('en-AU', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' }))}</span>
+    <span class="hint" style="grid-column:1/-1">${esc(s.vtype)} · ${esc(s.vemail)} · for ${esc(s.who.join(', '))}</span></div>`).join('') + `</div>`;
+}
 
-fetch(url('processed_recalls', PUB.recalls))
-  .then(r=>{ if(!r.ok) throw 0; return r.text(); })
-  .then(t=>{
-    const rows=toObjects(t).filter(r=>r.title);
-    recalls = rows.filter(r=>r.source!=='tga' && r.allergen_list).map(r=>({
-      title:r.title, link:r.link, published:r.published,
-      allergens:r.allergen_list.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean)
-    }));
-    shortages = rows.filter(r=>r.source==='tga').map(r=>({
-      title:r.title, link:r.link, published:r.published, processed_at:r.processed_at
-    }));
-    // Deliberately not recomputed. The sheet only ever stores allergen
-    // recalls, so a live ratio would always be 7/7. The headline number
-    // is out of everything the feed carried, which is the real finding.
-    renderRecalls(); renderShortages();
-  })
-  .catch(()=>{ recalls=[]; shortages=[]; renderRecalls(); renderShortages(); });
-
-fetch(url('restaurants', PUB.restaurants))
-  .then(r=>{ if(!r.ok) throw 0; return r.text(); })
-  .then(t=>{
-    // Rows created while testing the automation never reach the public directory.
-    venues = toObjects(t).filter(r=>r.name && !/^\s*QA TEST/i.test(r.name) && !/example\.com$/i.test(r.contact_email||'')).map(r=>({
-      name:r.name, suburb:r.suburb, cuisine:r.cuisine, prep:r.prep_area, notes:r.notes,
-      accommodates:(r.allergens_accommodated||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean)
-    }));
-    renderVenues();
-  })
-  .catch(()=>{ venues=[]; renderVenues(); });
+if (account && account.email) signedIn(); else show('signin');
 </script>
+</body>
+</html>
