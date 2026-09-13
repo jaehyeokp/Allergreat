@@ -621,10 +621,11 @@ function renderAlerts() {
     : hits.length
       ? `<div class="verdict hit"><span class="v-num">${hits.length}</span><span class="v-txt">of ${data.recalls.length} recent recalls involve <strong>${esc(names)}</strong>. Each would have reached you as an email quoting the official notice.</span></div>`
       : `<div class="verdict clear"><span class="v-num">0</span><span class="v-txt">of ${data.recalls.length} recent recalls involve <strong>${esc(names)}</strong>. You'd have heard nothing from us — that silence is the product.</span></div>`;
-  const recallRows = data.recalls.map(r => {
-    const hit = r.allergens.some(a => alertPick.has(a));
+  // Nothing picked: every recall. Something picked: only the ones that involve it.
+  const shownRecalls = alertPick.size ? hits : data.recalls;
+  const recallRows = shownRecalls.map(r => {
     const who = people.filter(p => p.allergens.some(a => r.allergens.includes(a))).map(p => p.name);
-    return `<div class="row${hit ? ' match' : ''}"><span class="row-t">${esc(r.title)}</span>
+    return `<div class="row"><span class="row-t">${esc(r.title)}</span>
       <span class="toks">${r.allergens.map(a => tok(a, alertPick.has(a))).join('')}</span>
       <span class="row-m">${who.length ? `<span class="hitwho">Affects ${esc(who.join(', '))}</span> ·` : ''} ${esc(fmtDate(r.published))}
         ${r.link ? `· <a href="${esc(r.link)}" target="_blank" rel="noopener">official notice ↗</a>` : ''}</span></div>`;
@@ -658,7 +659,7 @@ function renderAlerts() {
       <div class="chips" id="al-chips">${ALLERGENS.map(a => `<button type="button" class="chip" data-a="${esc(a)}" aria-pressed="${alertPick.has(a)}">${esc(a)}</button>`).join('')}</div>
       ${people.length && fam.size ? `<span class="hint">Pre-selected from your family's allergies. Tap to change.</span>` : ''}
       ${verdict}
-      ${data.recalls.length ? `<div class="rows">${recallRows}</div>` : `<div class="empty"><p>No allergen recalls on file right now.</p></div>`}
+      ${!data.recalls.length ? `<div class="empty"><p>No allergen recalls on file right now.</p></div>` : shownRecalls.length ? `<div class="rows">${recallRows}</div>` : ''}
     </div>
     <div class="block">
       <div class="block-h"><h2>Autoinjectors & medicines</h2><span class="hint">Expiry reminders for your family, and shortage alerts from the Therapeutic Goods Administration.</span></div>

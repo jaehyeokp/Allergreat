@@ -439,9 +439,12 @@ function renderRecalls(){
   $('verdict').innerHTML=`<div class="verdict ${cls}"><span class="v-num">${num}</span>
     <span class="v-txt">${txt}</span></div>`;
 
-  $('recalls').innerHTML=`<div class="rows">` + recalls.map(r=>{
-    const hit = [...picked].some(a=>r.allergens.includes(a));
-    return `<div class="row${hit?' match':''}">
+  // Nothing picked: show every recall. Something picked: show only the
+  // recalls that involve it — the verdict above already says how many.
+  const list = picked.size ? matched : recalls;
+  if(!list.length){ $('recalls').innerHTML=''; return; }
+  $('recalls').innerHTML=`<div class="rows">` + list.map(r=>{
+    return `<div class="row">
       <span class="row-t">${esc(r.title)}</span>
       <span class="toks">${r.allergens.map(a=>
         `<span class="tok${picked.has(a)?' on':''}" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</span>
