@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AllerGreat App</title>
+<style>
+  :root{
+    --bg:#FFFFFF; --card:#FFFFFF; --fill:#F2F2F7; --seg-on:#FFFFFF; --inset:#F6F7F9;
+    --wash:radial-gradient(900px 420px at 8% -8%,#E6F1FF 0%,rgba(230,241,255,0) 62%),radial-gradient(760px 380px at 100% -4%,#FFF0E3 0%,rgba(255,240,227,0) 58%),#FFFFFF;
+    --label:#1C1C1E; --label-2:#3A3A3C; --label-3:#6C6C70; --sep:rgba(60,60,67,.14);
+    --blue:#007AFF; --red:#FF3B30; --green:#28A745; --orange:#FF9500; --yellow:#E6B800;
+    --indigo:#5856D6; --purple:#AF52DE; --pink:#FF2D55; --teal:#1AA3BD; --brown:#A2845E; --gold:#C99A12; --gray:#8E8E93;
+    --blue-soft:rgba(0,122,255,.10); --red-soft:rgba(255,59,48,.09); --green-soft:rgba(52,199,89,.13); --orange-soft:rgba(255,149,0,.12);
+    --nav:rgba(255,255,255,.82);
+    --shadow:0 0 0 1px rgba(60,60,67,.09),0 2px 4px rgba(0,0,0,.03),0 10px 28px rgba(20,40,80,.06);
+    --r:18px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--wash);color:var(--label);
+       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+       font-size:17px;line-height:1.47;-webkit-font-smoothing:antialiased}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+  h1,h2,h3,h4{margin:0;text-wrap:balance;font-family:inherit}
+  p{margin:0}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+  [hidden]{display:none!important}
+
+
+  .chip{--c:var(--blue);display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:15px;font-weight:500;
+        padding:8px 14px;border-radius:999px;border:0;background:var(--fill);color:var(--label);cursor:pointer;
+        transition:background .15s ease,color .15s ease,transform .1s ease;-webkit-tap-highlight-color:transparent}
+  .chip::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+  .chip[aria-pressed="true"]{background:var(--c);color:#fff}
+  .chip[aria-pressed="true"]::before{background:#fff;opacity:.85}
+  .chip:active{transform:scale(.95)}
+  .tok{--c:var(--gray);display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;
+       white-space:nowrap;background:var(--fill);color:var(--label-2)}
+  @supports (background:color-mix(in srgb,red 10%,transparent)){
+    .tok{background:color-mix(in srgb,var(--c) 15%,transparent);color:color-mix(in srgb,var(--c) 72%,var(--label))}
+  }
+  .tok.on,.tok.hot.on{background:var(--c);color:#fff}
+  .tok.on:not([data-a]){--c:var(--red)}
+  .tok.ok{--c:var(--green)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:11px 20px;border-radius:13px;
+       border:0;background:var(--blue);color:#fff;font:inherit;font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;
+       transition:transform .1s ease,opacity .15s ease;-webkit-tap-highlight-color:transparent}
+  .btn:active{transform:scale(.97);opacity:.85}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .btn.ghost{background:var(--blue-soft);color:var(--blue)}
+  .btn.red{background:var(--red);color:#fff}
+  .btn .arw{opacity:.75}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  .top{position:sticky;top:0;z-index:50;background:var(--nav);border-bottom:1px solid var(--sep);
+       -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+  .top-in{max-width:1000px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:19px;letter-spacing:-.02em;text-decoration:none;color:var(--label)}
+  .brand::before{content:"";width:28px;height:28px;border-radius:8px;flex:none;background:linear-gradient(140deg,var(--orange),var(--red) 60%,var(--pink))}
+  .brand small{font-weight:500;font-size:13px;color:var(--label-3);margin-left:2px}
+  .tabs{display:flex;gap:2px;margin-left:auto;background:var(--fill);border-radius:11px;padding:2px}
+  .tab{--icon:none;display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:9px;padding:7px 13px;
+       font:inherit;font-size:14px;font-weight:600;color:var(--label-2);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .tab::before{content:"";width:17px;height:17px;flex:none;background:currentColor;
+       -webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat}
+  .tab[data-view="people"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='8' r='3.5'/%3E%3Cpath d='M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5'/%3E%3Ccircle cx='17.5' cy='9' r='2.5'/%3E%3Cpath d='M16.8 14.6c2.5.3 4.1 2 4.7 5.4'/%3E%3C/svg%3E")}
+  .tab[data-view="send"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.5 2.5 10.6 13.4'/%3E%3Cpath d='M21.5 2.5 14.6 21.5l-4-8.1-8.1-4z'/%3E%3C/svg%3E")}
+  .tab[data-view="sent"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='m7.6 12.4 3 3 5.9-6.3'/%3E%3C/svg%3E")}
+  .tab[aria-selected="true"]{background:var(--seg-on);color:var(--label);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .who{font-size:13px;color:var(--label-3);display:flex;gap:12px;align-items:center}
+  .link{background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--blue);cursor:pointer}
+
+  main{max-width:1000px;margin:0 auto;padding:28px 20px 90px}
+  .head{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
+  h1{font-size:clamp(30px,5vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.08}
+  h2{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
+  .lede{font-size:17px;color:var(--label-2);max-width:60ch}
+  .serif{font-family:inherit}
+
+  .panel{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow)}
+  .pad{padding:20px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media (max-width:860px){.grid2{grid-template-columns:1fr}}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:520px){.row2{grid-template-columns:1fr}}
+
+  label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--label-3);text-transform:uppercase;letter-spacing:.03em}
+  label.f .hint{text-transform:none;letter-spacing:0}
+  .in{width:100%;background:var(--fill);border:0;border-radius:11px;padding:12px 14px;font:inherit;font-size:17px;font-weight:400;
+      color:var(--label);text-transform:none;letter-spacing:0;-webkit-appearance:none;appearance:none}
+  select.in{background-image:linear-gradient(45deg,transparent 50%,var(--label-3) 50%),linear-gradient(135deg,var(--label-3) 50%,transparent 50%);
+      background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+  .in:focus{outline:none;box-shadow:0 0 0 3px var(--blue-soft),inset 0 0 0 1.5px var(--blue)}
+  .in::placeholder{color:var(--label-3);opacity:.7}
+  textarea.in{min-height:84px;resize:vertical}
+  .hint{font-size:13px;color:var(--label-3);font-weight:400}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+
+  .seg{display:flex;flex-wrap:wrap;gap:2px;background:var(--fill);border-radius:11px;padding:2px}
+  .seg button{flex:1;min-width:84px;border:0;background:transparent;border-radius:9px;padding:9px 8px;font:inherit;font-size:14.5px;font-weight:600;
+      color:var(--label-2);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--label);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .person{padding:18px;display:flex;flex-direction:column;gap:10px}
+  .person .rel{font-size:14px;color:var(--label-3)}
+  .toks{display:flex;flex-wrap:wrap;gap:5px}
+  .person-foot{display:flex;gap:18px;margin-top:auto;padding-top:10px;border-top:1px solid var(--sep)}
+  .person-foot [data-del]{color:var(--red)}
+
+  .pick{background:var(--inset);border-radius:14px;overflow:hidden}
+  .pick label{position:relative;display:flex;gap:12px;align-items:flex-start;padding:13px 14px;cursor:pointer}
+  .pick label + label::before{content:"";position:absolute;top:0;left:46px;right:0;height:1px;background:var(--sep)}
+  .pick input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--blue);flex:none}
+  .pick .meta{display:flex;flex-direction:column;gap:5px}
+  .pick .dis{opacity:.45;cursor:not-allowed}
+
+  .preview{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .pv-h{padding:14px 18px;border-bottom:1px solid var(--sep);display:flex;flex-direction:column;gap:4px}
+  .pv-h .mono{font-size:12px;color:var(--label-3);overflow-wrap:anywhere}
+  .pv-b{padding:18px;font-size:15px;color:var(--label-2);display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto}
+  .pv-b table{border-collapse:collapse;width:100%;font-size:13.5px}
+  .pv-b th,.pv-b td{text-align:left;padding:8px;border-bottom:1px solid var(--sep);vertical-align:top}
+  .pv-b th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--label-3);font-weight:600}
+  .sev-a{color:var(--red);font-weight:600}
+  .legal{font-size:13.5px;color:var(--label-2);background:var(--fill);border-radius:10px;padding:10px 12px}
+
+  .notice{border:0;border-radius:13px;padding:13px 15px;font-size:15px;color:var(--label)}
+  .notice.ok{background:var(--green-soft)} .notice.bad{background:var(--red-soft)} .notice.info{background:var(--orange-soft)}
+
+  .log{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .log > div{position:relative;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 14px}
+  .log > div + div::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--sep)}
+  .log .when{font-size:13px;color:var(--label-3)}
+  .empty{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:24px 22px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+  .pick .empty{box-shadow:none;background:transparent}
+  .empty p{color:var(--label-2)}
+
+  .signin{max-width:460px;margin:5vh auto 0}
+  .signin .panel{padding:26px}
+  dialog{border:0;border-radius:22px;padding:0;background:var(--card);color:var(--label);width:min(560px,94vw);
+         box-shadow:0 24px 70px rgba(0,0,0,.28)}
+  dialog::backdrop{background:rgba(0,0,0,.4)}
+
+  .tab[data-view="alerts"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16v-5a6 6 0 1 1 12 0v5l1.6 2.2H4.4z'/%3E%3Cpath d='M10 20.6a2 2 0 0 0 4 0'/%3E%3C/svg%3E")}
+  .tab[data-view="places"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3v5a2 2 0 0 0 4 0V3'/%3E%3Cpath d='M7 3v18'/%3E%3Cpath d='M17 21V3c-2.2 1.4-3.2 4-3.2 7.2V13H17'/%3E%3C/svg%3E")}
+  .block{display:flex;flex-direction:column;gap:12px;margin-bottom:34px}
+  .block-h{display:flex;flex-direction:column;gap:3px}
+  .verdict{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--fill)}
+  .verdict.hit{background:var(--red-soft)} .verdict.clear{background:var(--green-soft)}
+  .v-num{font-size:38px;font-weight:800;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .verdict.hit .v-num{color:var(--red)} .verdict.clear .v-num{color:var(--green)}
+  .v-txt{font-size:15.5px;color:var(--label-2);flex:1;min-width:200px}
+  .v-txt strong{color:var(--label)}
+  .rows{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .row{position:relative;display:grid;grid-template-columns:1fr auto;gap:6px 14px;padding:14px 16px;align-items:start}
+  .row + .row::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--sep)}
+  .row.match{background:var(--red-soft)}
+  .row-t{font-size:15.5px;font-weight:600;line-height:1.35}
+  .row.match .row-t::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:.12em}
+  .row-m{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--label-3)}
+  .row-m a{color:var(--blue);text-decoration:none}
+  .row-m .hitwho{color:var(--red);font-weight:600}
+  .row > .toks{justify-self:end}
+  .exp{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .exp-card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+  .exp-card .big{font-size:21px;font-weight:700;letter-spacing:-.02em}
+  .exp-card.ok .big{color:var(--green)} .exp-card.soon .big{color:var(--orange)} .exp-card.bad .big{color:var(--red)} .exp-card.none .big{color:var(--label-3)}
+  .venues{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .venue{padding:18px;display:flex;flex-direction:column;gap:10px}
+  .venue .sub{font-size:14px;color:var(--label-3)}
+  .prep{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--label-2)}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .dot.good{background:var(--green)} .dot.mid{background:var(--orange)} .dot.low{background:var(--gray)}
+  .venue .foot{padding-top:10px;border-top:1px solid var(--sep);font-size:11.5px;font-weight:600;letter-spacing:.03em;color:var(--label-3)}
+  .warn{background:var(--orange-soft);border-radius:14px;padding:12px 14px;font-size:14.5px;color:var(--label-2)}
+  .warn strong{color:var(--label)}
+  @media (max-width:620px){.row{grid-template-columns:1fr}.row > .toks{justify-self:start}}
+  @media (max-width:720px){
+    /* a blurred header becomes the containing block for position:fixed children,
+       which pinned the tab bar to the header instead of the screen */
+    .top{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--card)}
+    .seg{flex-wrap:nowrap}
+    .seg button{min-width:0;padding:9px 2px;font-size:13.5px}
+    .tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;margin:0;border-radius:0;gap:0;
+          padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:var(--nav);border-top:1px solid var(--sep);
+          -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+    .tab{flex:1;flex-direction:column;gap:3px;padding:5px 2px;font-size:10.5px;font-weight:500;color:var(--label-3);
+         background:transparent!important;box-shadow:none!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tab::before{width:25px;height:25px}
+    .tab[aria-selected="true"]{color:var(--blue)}
+    .who{width:100%;justify-content:space-between}
+    main{padding:22px 16px 118px}
+    dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:22px 22px 0 0;max-height:92vh}
+  }
+  /* allergen identity colours — the same allergen is the same colour everywhere */
+  :is(.chip,.tok)[data-a="peanuts"]{--c:var(--orange)} :is(.chip,.tok)[data-a="tree nuts"]{--c:var(--brown)} :is(.chip,.tok)[data-a="milk"]{--c:var(--blue)}
+  :is(.chip,.tok)[data-a="egg"]{--c:var(--gold)} :is(.chip,.tok)[data-a="soy"]{--c:var(--green)} :is(.chip,.tok)[data-a="wheat/gluten"]{--c:#B7791F}
+  :is(.chip,.tok)[data-a="sesame"]{--c:var(--teal)} :is(.chip,.tok)[data-a="fish"]{--c:var(--indigo)} :is(.chip,.tok)[data-a="shellfish"]{--c:var(--pink)}
+  :is(.chip,.tok)[data-a="lupin"]{--c:var(--purple)} :is(.chip,.tok)[data-a="sulphites"]{--c:var(--gray)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="index.html">AllerGreat<small>family app</small></a>
+    <nav class="tabs" id="tabs" hidden role="tablist">
+      <button class="tab" role="tab" data-view="alerts" aria-selected="true">Alerts</button>
+      <button class="tab" role="tab" data-view="places">Restaurants</button>
+      <button class="tab" role="tab" data-view="people">Family</button>
+      <button class="tab" role="tab" data-view="send">Send</button>
+      <button class="tab" role="tab" data-view="sent">Sent</button>
+    </nav>
+    <div class="who" id="who" hidden><span id="whoName"></span><button class="link" id="signout">Sign out</button></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ─────────── SIGN IN ─────────── -->
+<section id="v-signin" class="signin">
+  <div class="panel pad stack">
+    <div class="stack" style="gap:8px">
+      <h1>Stop retyping your family's allergies.</h1>
+      <p class="lede">Save everyone once. Then send their details to any restaurant, childcare centre or school in a few taps.</p>
+    </div>
+    <label class="f">Your name<input class="in" id="si-name" autocomplete="name" placeholder="Sam Taylor"></label>
+    <label class="f">Your email<input class="in" id="si-email" type="email" autocomplete="email" placeholder="you@example.com">
+      <span class="hint">Venues reply to this address. Your family's profiles are saved on this device.</span></label>
+    <div class="btns"><button class="btn" id="si-go">Sign in</button></div>
+    <p class="notice bad" id="si-err" hidden></p>
+  </div>
+</section>
+
+<!-- ─────────── ALERTS ─────────── -->
+<section id="v-alerts" hidden>
+  <div class="head">
+    <h1>Alerts</h1>
+    <p class="lede">Official Australian food recalls and medicine shortages, checked against your family.</p>
+  </div>
+  <div id="alerts"></div>
+</section>
+
+<!-- ─────────── RESTAURANTS ─────────── -->
+<section id="v-places" hidden>
+  <div class="head">
+    <h1>Restaurants</h1>
+    <p class="lede">What each restaurant has told us its kitchen can do — in its own words.</p>
+  </div>
+  <div class="panel pad stack" style="margin-bottom:16px">
+    <label class="f">Search<input class="in" id="pl-q" placeholder="Name, suburb or cuisine"></label>
+    <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--label-2)">Who's coming</span><div class="chips" id="pl-who"></div></div>
+  </div>
+  <div id="places"></div>
+  <p class="warn" style="margin-top:16px"><strong>We never describe a venue as safe.</strong> Every listing is declared by the restaurant itself, not inspected by AllerGreat. Always confirm with staff before you order.</p>
+</section>
+
+<!-- ─────────── FAMILY ─────────── -->
+<section id="v-people" hidden>
+  <div class="head">
+    <h1>Your family</h1>
+    <p class="lede">Everyone whose allergies you manage. Add each child once — you'll pick who's coming each time you send.</p>
+  </div>
+  <div class="btns" style="margin-bottom:18px">
+    <button class="btn" id="add-person">Add a person</button>
+    <button class="btn ghost" id="sample" hidden>Load an example family</button>
+    <button class="btn ghost" id="alerts-all">Turn on recall alerts for everyone</button>
+  </div>
+  <p class="notice" id="alerts-msg" hidden style="margin-bottom:16px"></p>
+  <div id="people"></div>
+</section>
+
+<!-- ─────────── SEND ─────────── -->
+<section id="v-send" hidden>
+  <div class="head">
+    <h1>Send allergy details</h1>
+    <p class="lede">Choose where you're going and who's coming. We write the email; replies come straight to you.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel pad stack">
+      <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--ink-2)">Where to</span>
+        <div class="seg" id="vtype">
+          <button data-v="restaurant" aria-pressed="true">Restaurant</button>
+          <button data-v="childcare" aria-pressed="false">Childcare</button>
+          <button data-v="school" aria-pressed="false">School</button>
+          <button data-v="other" aria-pressed="false">Other</button>
+        </div></div>
+      <div class="row2">
+        <label class="f">Venue name<input class="in" id="s-vname" placeholder="Thai Garden"></label>
+        <label class="f"><span id="s-date-l">Visit date</span><input class="in" id="s-date" placeholder="Sat 20 Sep, 7pm"></label>
+      </div>
+      <label class="f">Venue email<input class="in" id="s-vemail" type="email" placeholder="bookings@venue.com.au"></label>
+      <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--ink-2)">Who's coming</span>
+        <div class="pick" id="s-pick"></div></div>
+      <label class="f">Anything else they should know<span class="hint">Optional</span>
+        <textarea class="in" id="s-note" placeholder="Mia's reaction to peanuts was severe last year. We'd prefer a table away from the kitchen."></textarea></label>
+      <div class="btns"><button class="btn red" id="s-go">Send email</button><span class="hint" id="s-why"></span></div>
+      <p class="notice" id="s-msg" hidden></p>
+    </div>
+    <div class="stack" style="gap:8px">
+      <span class="hint" style="font-weight:600;color:var(--ink-2)">What the venue receives</span>
+      <div class="preview">
+        <div class="pv-h"><span class="mono" id="pv-to">To: —</span><h3 id="pv-subj">—</h3></div>
+        <div class="pv-b" id="pv-body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── SENT ─────────── -->
+<section id="v-sent" hidden>
+  <div class="head">
+    <h1>Sent</h1>
+    <p class="lede">Every email you've sent from this device. A copy of each is in your inbox too.</p>
+  </div>
+  <div id="sent"></div>
+</section>
+
+</main>
+
+<!-- person editor -->
+<dialog id="dlg">
+  <form method="dialog" class="pad stack" id="pform">
+    <h2 id="dlg-title">Add a person</h2>
+    <div class="row2">
+      <label class="f">Name<input class="in" id="p-name" required placeholder="Mia"></label>
+      <label class="f">Relationship &amp; age <span class="hint">Optional</span><input class="in" id="p-rel" placeholder="e.g. Daughter, age 6"></label>
+    </div>
+    <div class="stack" style="gap:6px"><span class="hint" style="font-weight:600;color:var(--ink-2)">Allergies</span><div class="chips" id="p-all"></div></div>
+    <div class="row2">
+      <label class="f">Reaction<select class="in" id="p-sev"><option value="anaphylaxis">Anaphylaxis</option><option value="severe" selected>Severe</option><option value="mild">Mild</option></select></label>
+      <label class="f">Autoinjector<select class="in" id="p-inj"><option value="">None</option><option>EpiPen</option><option>EpiPen Jr</option><option>Anapen</option><option>Anapen Junior</option></select></label>
+    </div>
+    <label class="f">Autoinjector expiry <span class="hint">Optional — the month printed on the box</span><input class="in" id="p-exp" type="month" placeholder="2027-03"></label>
+    <label class="f">Notes for venues<textarea class="in" id="p-notes" placeholder="Also avoids anything cooked in shared fryer oil."></textarea></label>
+    <div class="btns"><button class="btn" value="save" id="p-save">Save</button><button class="btn ghost" value="cancel" formnovalidate>Cancel</button></div>
+  </form>
+</dialog>
+
+<script>
+const N8N = 'https://jaehyeok.app.n8n.cloud';
+const ALLERGENS = ['peanuts','tree nuts','milk','egg','soy','wheat/gluten','sesame','fish','shellfish','lupin','sulphites'];
+const SEV = { anaphylaxis:'Anaphylaxis risk (life-threatening)', severe:'Severe reaction', mild:'Mild reaction' };
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim());
+
+/* ── storage: per account, on this device ── */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let account = store.get('ag.account', null);
+const key = s => 'ag.' + s + '.' + (account ? account.email : '');
+let people = [], sent = [], editing = null;
+function load() { people = store.get(key('people'), []); sent = store.get(key('sent'), []); }
+function save() { store.set(key('people'), people); store.set(key('sent'), sent); }
+
+/* ── views ── */
+let currentView = 'signin';
+function show(view) {
+  currentView = view;
+  ['signin','alerts','places','people','send','sent'].forEach(v => $('v-' + v).hidden = v !== view);
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === view)));
+  if (view === 'alerts') renderAlerts();
+  if (view === 'places') renderPlaces();
+  if (view === 'people') renderPeople();
+  if (view === 'send') renderPick();
+  if (view === 'sent') renderSent();
+  window.scrollTo(0, 0);
+}
+function signedIn() {
+  $('tabs').hidden = false; $('who').hidden = false;
+  $('whoName').textContent = account.name + ' · ' + account.email;
+  load(); alertPick = null; placeFor = null; show('alerts'); loadData();
+}
+$('si-go').onclick = () => {
+  const name = $('si-name').value.trim(), email = $('si-email').value.trim().toLowerCase();
+  if (!name || !isEmail(email)) { $('si-err').hidden = false; $('si-err').textContent = 'Enter your name and a valid email address.'; return; }
+  account = { name, email }; store.set('ag.account', account); $('si-err').hidden = true; signedIn();
+};
+$('signout').onclick = () => { account = null; store.set('ag.account', null); $('tabs').hidden = true; $('who').hidden = true; show('signin'); };
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => show(t.dataset.view));
+
+/* ── family ── */
+function renderPeople() {
+  $('sample').hidden = people.length > 0;
+  if (!people.length) {
+    $('people').innerHTML = `<div class="empty"><h3>No one added yet</h3>
+      <p>Add yourself if you have allergies, then each child or family member whose allergies you manage.</p></div>`;
+    return;
+  }
+  $('people').innerHTML = `<div class="people">` + people.map((p, i) => `
+    <article class="panel person">
+      <div><h3>${esc(p.name)}</h3>${p.relation ? `<span class="rel">${esc(p.relation)}</span>` : ''}</div>
+      <div class="toks">${p.allergens.length ? p.allergens.map(a => `<span class="tok hot" data-a="${esc(a)}">${esc(a)}</span>`).join('') : '<span class="tok">no allergies listed</span>'}</div>
+      <p class="hint" style="color:var(--label-2)">${esc(SEV[p.severity])}${p.injector ? ' · carries ' + esc(p.injector) + (p.expiry ? ' (expires ' + esc(monthLabel(p.expiry)) + ')' : '') : ''}</p>
+      ${p.notes ? `<p class="hint">${esc(p.notes)}</p>` : ''}
+      <div class="person-foot"><button class="link" data-edit="${i}">Edit</button><button class="link" data-del="${i}">Remove</button></div>
+    </article>`).join('') + `</div>`;
+  document.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEditor(+b.dataset.edit));
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    if (confirm('Remove ' + people[+b.dataset.del].name + '?')) { people.splice(+b.dataset.del, 1); alertPick = null; placeFor = null; save(); renderPeople(); }
+  });
+}
+let draftAll = new Set();
+function openEditor(i) {
+  editing = i;
+  const p = i == null ? { name:'', relation:'', allergens:[], severity:'severe', injector:'', notes:'', expiry:'' } : people[i];
+  $('dlg-title').textContent = i == null ? 'Add a person' : 'Edit ' + p.name;
+  $('p-name').value = p.name; $('p-rel').value = p.relation; $('p-sev').value = p.severity;
+  $('p-inj').value = p.injector; $('p-notes').value = p.notes; $('p-exp').value = p.expiry || '';
+  draftAll = new Set(p.allergens);
+  $('p-all').innerHTML = ALLERGENS.map(a => `<button type="button" class="chip" aria-pressed="${draftAll.has(a)}" data-a="${esc(a)}">${esc(a)}</button>`).join('');
+  $('p-all').querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    const a = c.dataset.a; draftAll.has(a) ? draftAll.delete(a) : draftAll.add(a); c.setAttribute('aria-pressed', String(draftAll.has(a)));
+  });
+  $('dlg').showModal();
+}
+$('add-person').onclick = () => openEditor(null);
+$('pform').addEventListener('submit', e => {
+  if (e.submitter && e.submitter.value === 'cancel') return;
+  const name = $('p-name').value.trim();
+  if (!name) { e.preventDefault(); $('p-name').focus(); return; }
+  const p = { name, relation: $('p-rel').value.trim(), allergens: ALLERGENS.filter(a => draftAll.has(a)),
+              severity: $('p-sev').value, injector: $('p-inj').value, notes: $('p-notes').value.trim(), expiry: $('p-exp').value.trim() };
+  if (editing == null) people.push(p); else people[editing] = p;
+  alertPick = null; placeFor = null;
+  save(); renderPeople();
+});
+$('sample').onclick = () => {
+  people = [
+    { name:'Mia', relation:'Daughter, age 6', allergens:['peanuts','tree nuts'], severity:'anaphylaxis', injector:'EpiPen Jr', notes:'Reacts to traces — please avoid anything prepared near nuts.', expiry: sampleExpiry(140) },
+    { name:'Leo', relation:'Son, age 9', allergens:['milk','egg'], severity:'severe', injector:'', notes:'' }
+  ];
+  alertPick = null; placeFor = null;
+  save(); renderPeople();
+};
+
+/* recall alerts: register each person with the existing signup flow */
+$('alerts-all').onclick = async () => {
+  const msg = $('alerts-msg'), withAll = people.filter(p => p.allergens.length);
+  msg.hidden = false;
+  if (!withAll.length) { msg.className = 'notice info'; msg.textContent = 'Add at least one person with allergies first.'; return; }
+  msg.className = 'notice info'; msg.textContent = 'Turning on recall alerts…';
+  let ok = 0;
+  for (const p of withAll) {
+    const fd = new FormData();
+    fd.append('field-0', p.name + (p.relation ? ' (' + p.relation + ')' : ''));
+    fd.append('field-1', account.email);
+    fd.append('field-2', JSON.stringify(p.allergens));
+    fd.append('field-3', '');
+    fd.append('field-4', p.injector || 'none');
+    fd.append('field-5', p.injector && p.expiry ? p.expiry : '');
+    fd.append('field-6', '');
+    fd.append('field-7', p.severity);
+    fd.append('field-8', '');
+    try { const r = await fetch(N8N + '/form/allergy-profile', { method:'POST', body: fd }); if (r.ok) ok++; } catch (e) {}
+  }
+  msg.className = ok === withAll.length ? 'notice ok' : 'notice bad';
+  msg.textContent = ok === withAll.length
+    ? `Recall alerts are on for ${ok === 1 ? withAll[0].name : ok + ' people'}. Alerts go to ${account.email}, each addressed by name.`
+    : `Only ${ok} of ${withAll.length} could be registered. Check your connection and try again.`;
+};
+
+/* ── send ── */
+let vtype = 'restaurant';
+document.querySelectorAll('#vtype button').forEach(b => b.onclick = () => {
+  vtype = b.dataset.v;
+  document.querySelectorAll('#vtype button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  $('s-date-l').textContent = vtype === 'childcare' || vtype === 'school' ? 'Starting' : 'Visit date';
+  preview();
+});
+['s-vname','s-vemail','s-date','s-note'].forEach(id => $(id).addEventListener('input', preview));
+function renderPick() {
+  if (!people.length) {
+    $('s-pick').innerHTML = `<div class="empty" style="border:0"><p>No one in your family yet.</p>
+      <button class="btn ghost" onclick="show('people')">Add someone</button></div>`;
+  } else {
+    $('s-pick').innerHTML = people.map((p, i) => {
+      const usable = p.allergens.length || p.notes;
+      return `<label class="${usable ? '' : 'dis'}"><input type="checkbox" data-i="${i}" ${usable ? '' : 'disabled'} ${usable && p.allergens.length ? 'checked' : ''}>
+        <span class="meta"><b>${esc(p.name)}</b>${p.relation ? `<span class="hint">${esc(p.relation)}</span>` : ''}
+        <span class="toks">${p.allergens.map(a => `<span class="tok hot" data-a="${esc(a)}">${esc(a)}</span>`).join('') || '<span class="tok">no allergies — nothing to send</span>'}</span></span></label>`;
+    }).join('');
+    $('s-pick').querySelectorAll('input').forEach(c => c.onchange = preview);
+  }
+  preview();
+}
+const chosen = () => [...document.querySelectorAll('#s-pick input:checked')].map(c => people[+c.dataset.i]);
+
+/* mirrors the n8n "Build Enquiry" template so what you see is what they get */
+function preview() {
+  const ps = chosen(), n = ps.length, vname = $('s-vname').value.trim(), date = $('s-date').value.trim();
+  const names = ps.map(p => p.name), list = names.length <= 1 ? (names[0] || '') : names.slice(0, -1).join(', ') + ' and ' + names.at(-1);
+  const care = vtype === 'childcare' || vtype === 'school';
+  const subject = !n ? '—' : care
+    ? 'Allergy information for ' + list + (vname ? ' — ' + vname : '')
+    : 'Allergy information for ' + n + (n === 1 ? ' guest' : ' guests') + (date ? ' on ' + date : '') + (vname ? ' — ' + vname : '');
+  $('pv-to').textContent = 'To: ' + ($('s-vemail').value.trim() || '—') + '   ·   Reply-to: ' + (account ? account.email : '');
+  $('pv-subj').textContent = subject;
+  const venue = vname || (vtype === 'restaurant' ? 'your restaurant' : vtype === 'other' ? 'your venue' : 'your service');
+  const intro = care
+    ? `${esc(account.name)} is sending the allergy details for <b>${esc(list)}</b>, who ${n === 1 ? 'attends' : 'attend'} ${esc(venue)}${date ? ' from ' + esc(date) : ''}.`
+    : `${esc(account.name)} is planning to eat at ${esc(venue)}${date ? ' on <b>' + esc(date) + '</b>' : ''}. ${n === 1 ? 'One person' : n + ' people'} in the group ${n === 1 ? 'has' : 'have'} food allergies, listed below.`;
+  const asks = care
+    ? ['Please add these details to ' + (n === 1 ? 'their record' : 'their records') + ' and share them with every staff member who prepares food or supervises meals.',
+       'Please confirm a current ASCIA Action Plan is on file for anyone at risk of anaphylaxis.',
+       'Let us know if you need anything else from us — for example a spare adrenaline autoinjector.']
+    : ['Which dishes can be prepared safely for them?', 'How do you prevent cross-contact — shared fryers, surfaces or utensils?', 'Is there anything on the menu they should avoid entirely?'];
+  const note = $('s-note').value.trim();
+  $('pv-body').innerHTML = !n ? '<p>Tick at least one person to see the email.</p>' : `
+    <p>Hello ${esc(vname ? vname + ' team' : 'there')},</p><p>${intro}</p>
+    ${vtype === 'restaurant' ? '<p class="legal">Under the Food Standards Code, food businesses must give customers accurate allergen information when asked. Please only confirm what your kitchen can reliably do. A written reply helps this family plan safely.</p>' : ''}
+    <table><tr><th>Name</th><th>Allergies</th><th>Severity</th><th>Notes</th></tr>
+    ${ps.map(p => `<tr><td><b>${esc(p.name)}</b>${p.relation ? '<br><span class="hint">' + esc(p.relation) + '</span>' : ''}</td>
+      <td>${esc(p.allergens.join(', ') || '—')}</td>
+      <td class="${p.severity === 'anaphylaxis' ? 'sev-a' : ''}">${esc(SEV[p.severity])}${p.injector ? '<br><span class="hint">Carries ' + esc(p.injector) + '</span>' : ''}</td>
+      <td>${esc(p.notes)}</td></tr>`).join('')}</table>
+    ${note ? `<p><b>A note from ${esc(account.name)}:</b><br>${esc(note).replace(/\n/g, '<br>')}</p>` : ''}
+    <p><b>${care ? 'We would be grateful if you could:' : 'Could you let them know:'}</b></p>
+    <ul style="margin:0;padding-left:20px">${asks.map(a => '<li>' + a + '</li>').join('')}</ul>
+    <p><b>Just reply to this email</b> — your answer goes straight to ${esc(account.name)} at ${esc(account.email)}.</p>`;
+  const why = !n ? 'Tick at least one person.' : !isEmail($('s-vemail').value) ? 'Add the venue\'s email.' : '';
+  $('s-why').textContent = why; $('s-go').disabled = !!why;
+}
+$('s-go').onclick = async () => {
+  const ps = chosen(), vemail = $('s-vemail').value.trim(), vname = $('s-vname').value.trim(), msg = $('s-msg');
+  const fd = new FormData();
+  fd.append('field-0', account.name); fd.append('field-1', account.email); fd.append('field-2', vtype);
+  fd.append('field-3', vname); fd.append('field-4', vemail); fd.append('field-5', $('s-date').value.trim());
+  fd.append('field-6', $('s-note').value.trim());
+  fd.append('field-7', JSON.stringify(ps.map(p => ({ name: p.name, relation: p.relation, allergens: p.allergens, severity: p.severity, injector: p.injector, notes: p.notes }))));
+  $('s-go').disabled = true; $('s-go').textContent = 'Sending…'; msg.hidden = true;
+  try {
+    const r = await fetch(N8N + '/form/enquiry', { method: 'POST', body: fd });
+    if (!r.ok) throw new Error('The automation answered ' + r.status + '.');
+    sent.unshift({ at: new Date().toISOString(), vtype, vname, vemail, who: ps.map(p => p.name) }); save();
+    msg.className = 'notice ok'; msg.hidden = false;
+    msg.textContent = `Sent to ${vname || vemail}. A copy is on its way to ${account.email}, and their reply will come straight to you.`;
+    $('s-vname').value = ''; $('s-vemail').value = ''; $('s-date').value = ''; $('s-note').value = '';
+  } catch (e) {
+    msg.className = 'notice bad'; msg.hidden = false;
+    msg.textContent = 'Not sent. ' + (e.message && !/fetch/i.test(e.message) ? e.message : 'Couldn\'t reach the automation — check your connection and try again.');
+  }
+  $('s-go').textContent = 'Send email'; preview();
+};
+
+/* ── official data: the same sheet the automation writes to ── */
+const SHEET = 'https://docs.google.com/spreadsheets/d/1mJPKmqp3Ly0C6kC4gD7iYjaD9Vtytvzq3InJDE4X6e0/gviz/tq?tqx=out:csv&headers=1&sheet=';
+const INJ = /adrenalin|epinephrin|epipen|anapen|auto-?\s?injector/i;
+let data = { loaded: false, failed: false, recalls: [], shortages: [], venues: [] };
+let alertPick = null, placeFor = null, shownVenues = [];
+
+function parseCSV(t) {
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < t.length; i++) { const c = t[i];
+    if (q) { if (c === '"' && t[i + 1] === '"') { cell += '"'; i++; } else if (c === '"') q = false; else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+    else if (c !== '\r') cell += c;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+function toObjects(text) {
+  const rows = parseCSV(text).filter(r => r.some(c => c.trim()));
+  if (rows.length < 2) return [];
+  const head = rows[0].map(h => h.trim().toLowerCase());
+  return rows.slice(1).map(r => { const o = {}; head.forEach((h, i) => { if (h) o[h] = (r[i] || '').trim(); }); return o; });
+}
+const fmtDate = s => { const d = new Date(s); return isNaN(d) ? '' : d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }); };
+function monthLabel(ym) { const m = String(ym || '').match(/^(\d{4})-(\d{1,2})/); return m ? new Date(+m[1], +m[2] - 1, 1).toLocaleDateString('en-AU', { month:'short', year:'numeric' }) : ym; }
+function daysUntil(ym) { const m = String(ym || '').match(/^(\d{4})-(\d{1,2})/); if (!m) return null; const t = new Date(); t.setHours(0,0,0,0); return Math.round((new Date(+m[1], +m[2] - 1, 28) - t) / 86400000); }
+function sampleExpiry(days) { const d = new Date(); d.setDate(d.getDate() + days); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+const tok = (a, on) => `<span class="tok${on ? ' on' : ''}" data-a="${esc(a)}">${esc(a)}</span>`;
+
+async function loadData(force) {
+  if (data.loaded && !force) return;
+  data.failed = false;
+  try {
+    const get = t => fetch(SHEET + t).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+    const [pr, rs] = await Promise.all([get('processed_recalls'), get('restaurants')]);
+    const rows = toObjects(pr).filter(r => r.title);
+    data.recalls = rows.filter(r => r.source !== 'tga' && r.allergen_list).map(r => ({ title: r.title, link: r.link, published: r.published,
+      allergens: r.allergen_list.split(',').map(x => x.trim().toLowerCase()).filter(Boolean) }));
+    data.shortages = rows.filter(r => r.source === 'tga').map(r => ({ title: r.title, link: r.link, published: r.published, processed_at: r.processed_at }));
+    data.venues = toObjects(rs).filter(r => r.name && !/^\s*QA TEST/i.test(r.name) && !/example\.com$/i.test(r.contact_email || '')).map(r => ({
+      name: r.name, suburb: r.suburb, cuisine: r.cuisine, prep: r.prep_area, notes: r.notes, email: r.contact_email, registered: r.registered_at,
+      accommodates: (r.allergens_accommodated || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean) }));
+    data.loaded = true;
+  } catch (e) { data.failed = true; }
+  if (currentView === 'alerts') renderAlerts();
+  if (currentView === 'places') renderPlaces();
+}
+function loadingState(box) {
+  box.innerHTML = data.failed
+    ? `<div class="empty"><h3>Couldn't load the official data</h3><p>Check your connection and try again.</p><button class="btn ghost" onclick="loadData(true)">Try again</button></div>`
+    : `<div class="empty"><p>Loading official recalls, medicine alerts and restaurant listings…</p></div>`;
+}
+
+/* ── alerts ── */
+function renderAlerts() {
+  const box = $('alerts');
+  if (!data.loaded) { loadingState(box); return; }
+  if (alertPick === null) alertPick = new Set(people.flatMap(p => p.allergens));
+  const fam = new Set(people.flatMap(p => p.allergens));
+
+  // 1 · food recalls
+  const hits = data.recalls.filter(r => r.allergens.some(a => alertPick.has(a)));
+  const names = [...alertPick].join(', ');
+  const verdict = !alertPick.size
+    ? `<div class="verdict"><span class="v-num">${data.recalls.length}</span><span class="v-txt">recent allergen recalls on file. <strong>Tick allergens above</strong>${people.length ? '' : ', or add your family,'} to see which affect you.</span></div>`
+    : hits.length
+      ? `<div class="verdict hit"><span class="v-num">${hits.length}</span><span class="v-txt">of ${data.recalls.length} recent recalls involve <strong>${esc(names)}</strong>. Each would have reached you as an email quoting the official notice.</span></div>`
+      : `<div class="verdict clear"><span class="v-num">0</span><span class="v-txt">of ${data.recalls.length} recent recalls involve <strong>${esc(names)}</strong>. You'd have heard nothing from us — that silence is the product.</span></div>`;
+  const recallRows = data.recalls.map(r => {
+    const hit = r.allergens.some(a => alertPick.has(a));
+    const who = people.filter(p => p.allergens.some(a => r.allergens.includes(a))).map(p => p.name);
+    return `<div class="row${hit ? ' match' : ''}"><span class="row-t">${esc(r.title)}</span>
+      <span class="toks">${r.allergens.map(a => tok(a, alertPick.has(a))).join('')}</span>
+      <span class="row-m">${who.length ? `<span class="hitwho">Affects ${esc(who.join(', '))}</span> ·` : ''} ${esc(fmtDate(r.published))}
+        ${r.link ? `· <a href="${esc(r.link)}" target="_blank" rel="noopener">official notice ↗</a>` : ''}</span></div>`;
+  }).join('');
+
+  // 2 · autoinjectors: expiry + TGA shortages
+  const carriers = people.filter(p => p.injector);
+  const expCards = carriers.map((p, i) => {
+    const d = daysUntil(p.expiry);
+    const cls = d === null ? 'none' : d < 0 ? 'bad' : d <= 30 ? 'soon' : 'ok';
+    const big = d === null ? 'No expiry date' : d < 0 ? 'Expired' : d === 0 ? 'Expires today' : `${d} days left`;
+    const sub = d === null ? `Add the date on the box and we'll remind you at 90, 60, 30 and 7 days.` : `${esc(p.injector)} · expires ${esc(monthLabel(p.expiry))}`;
+    return `<div class="exp-card ${cls}"><b>${esc(p.name)}</b><span class="big">${big}</span><span class="hint">${sub}</span>
+      ${d === null || d <= 30 ? `<button class="link" style="align-self:flex-start" data-editp="${people.indexOf(p)}">${d === null ? 'Add expiry date' : 'Update after replacing'}</button>` : ''}</div>`;
+  }).join('');
+  const inj = data.shortages.filter(x => INJ.test(x.title));
+  const last = data.shortages.map(x => Date.parse(x.processed_at)).filter(Boolean).sort((a, b) => b - a)[0];
+  const shortVerdict = !data.shortages.length
+    ? `<div class="empty"><h3>Today's medicine check hasn't run yet</h3><p>It reads every current TGA shortage alert and flags anything involving an adrenaline autoinjector.</p></div>`
+    : inj.length
+      ? `<div class="verdict hit"><span class="v-num">${inj.length}</span><span class="v-txt">of ${data.shortages.length} current TGA shortage alerts involve an <strong>adrenaline autoinjector</strong>.${carriers.length ? ' Your family carries one — you have been emailed.' : ''}</span></div>`
+      : `<div class="verdict clear"><span class="v-num">0</span><span class="v-txt">of ${data.shortages.length} current TGA shortage alerts involve an adrenaline autoinjector${last ? ' — checked ' + esc(new Date(last).toLocaleString('en-AU', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' })) : ''}.${carriers.length ? ' <strong>Nothing affects ' + esc(carriers.map(p => p.name).join(', ')) + '.</strong>' : ''}</span></div>`;
+  const shortRows = [...inj, ...data.shortages.filter(x => !INJ.test(x.title))].map(x => `
+    <div class="row${INJ.test(x.title) ? ' match' : ''}"><span class="row-t">${esc(x.title)}</span>
+      <span class="toks"><span class="tok ${INJ.test(x.title) ? 'on' : 'ok'}">${INJ.test(x.title) ? 'AUTOINJECTOR' : 'TGA'}</span></span>
+      <span class="row-m">${esc(fmtDate(x.published))} ${x.link ? `· <a href="${esc(x.link)}" target="_blank" rel="noopener">official alert ↗</a>` : ''}</span></div>`).join('');
+
+  box.innerHTML = `
+    <div class="block">
+      <div class="block-h"><h2>Food recalls</h2><span class="hint">From the Food Standards Australia New Zealand recall feed. AllerGreat checks it every hour.</span></div>
+      <div class="chips" id="al-chips">${ALLERGENS.map(a => `<button type="button" class="chip" data-a="${esc(a)}" aria-pressed="${alertPick.has(a)}">${esc(a)}</button>`).join('')}</div>
+      ${people.length && fam.size ? `<span class="hint">Pre-selected from your family's allergies. Tap to change.</span>` : ''}
+      ${verdict}
+      ${data.recalls.length ? `<div class="rows">${recallRows}</div>` : `<div class="empty"><p>No allergen recalls on file right now.</p></div>`}
+    </div>
+    <div class="block">
+      <div class="block-h"><h2>Autoinjectors & medicines</h2><span class="hint">Expiry reminders for your family, and shortage alerts from the Therapeutic Goods Administration.</span></div>
+      ${carriers.length ? `<div class="exp">${expCards}</div>` : `<div class="empty"><p>Nobody in your family has an autoinjector saved. Add one in Family to get expiry reminders.</p><button class="btn ghost" onclick="show('people')">Open Family</button></div>`}
+      ${shortVerdict}
+      ${data.shortages.length ? `<div class="rows">${shortRows}</div>` : ''}
+    </div>`;
+  box.querySelectorAll('#al-chips .chip').forEach(c => c.onclick = () => {
+    const a = c.dataset.a; alertPick.has(a) ? alertPick.delete(a) : alertPick.add(a); renderAlerts();
+  });
+  box.querySelectorAll('[data-editp]').forEach(b => b.onclick = () => { show('people'); openEditor(+b.dataset.editp); });
+}
+
+/* ── restaurants ── */
+function prepInfo(t) {
+  t = (t || '').toLowerCase();
+  if (t.includes('dedicated')) return ['good', 'Dedicated preparation area'];
+  if (t.includes('shared')) return ['mid', 'Shared area, cleaned between orders'];
+  if (t.includes('no')) return ['low', 'No separate preparation area'];
+  return ['low', 'Preparation area not stated'];
+}
+function renderPlaces() {
+  const box = $('places');
+  if (placeFor === null) placeFor = new Set(people.map((p, i) => i).filter(i => people[i].allergens.length));
+  $('pl-who').innerHTML = people.length
+    ? people.map((p, i) => `<button type="button" class="chip" data-i="${i}" aria-pressed="${placeFor.has(i)}">${esc(p.name)}</button>`).join('')
+    : `<span class="hint">Add your family to filter by who's coming.</span>`;
+  $('pl-who').querySelectorAll('.chip').forEach(c => c.onclick = () => { const i = +c.dataset.i; placeFor.has(i) ? placeFor.delete(i) : placeFor.add(i); renderPlaces(); });
+  if (!data.loaded) { loadingState(box); return; }
+  const need = [...new Set([...placeFor].flatMap(i => people[i] ? people[i].allergens : []))];
+  const q = $('pl-q').value.trim().toLowerCase();
+  shownVenues = data.venues.filter(v => need.every(a => v.accommodates.includes(a)) &&
+    (!q || [v.name, v.suburb, v.cuisine].join(' ').toLowerCase().includes(q)));
+  if (!data.venues.length) {
+    box.innerHTML = `<div class="empty"><h3>No restaurants have listed yet</h3>
+      <p>Every enquiry you send invites that restaurant to list here — so the directory grows each time a family asks.</p>
+      <button class="btn" onclick="show('send')">Ask a restaurant</button></div>`;
+    return;
+  }
+  if (!shownVenues.length) {
+    box.innerHTML = `<div class="empty"><h3>No listed restaurant matches yet</h3>
+      <p>${need.length ? `None has declared it can handle <strong>${esc(need.join(', '))}</strong>${q ? ' and matches “' + esc(q) + '”' : ''}.` : `Nothing matches “${esc(q)}”.`} You can still ask a restaurant directly.</p>
+      <button class="btn" onclick="show('send')">Ask a restaurant</button></div>`;
+    return;
+  }
+  box.innerHTML = `<p class="hint" style="margin-bottom:10px">${shownVenues.length} of ${data.venues.length} listed restaurants${need.length ? ' can accommodate everyone selected' : ''}.</p>
+    <div class="venues">` + shownVenues.map((v, i) => {
+      const [c, label] = prepInfo(v.prep);
+      return `<article class="panel venue">
+        <div><h3>${esc(v.name)}</h3><span class="sub">${esc(v.suburb)}${v.cuisine ? ' · ' + esc(v.cuisine) : ''}</span></div>
+        <div class="toks">${v.accommodates.map(a => tok(a, need.includes(a))).join('') || '<span class="tok">no allergens declared</span>'}</div>
+        <div class="prep"><span class="dot ${c}"></span>${esc(label)}</div>
+        ${v.notes ? `<p class="hint" style="color:var(--label-2)">“${esc(v.notes)}”</p>` : ''}
+        ${v.email ? `<button class="btn ghost" data-ask="${i}">Ask about ${placeFor.size === 1 ? esc(people[[...placeFor][0]].name) : 'your family'}</button>` : ''}
+        <div class="foot">DECLARED BY THE RESTAURANT${v.registered ? ' · ' + esc(fmtDate(v.registered).toUpperCase()) : ''} · CONFIRM WITH STAFF</div>
+      </article>`;
+    }).join('') + `</div>`;
+  box.querySelectorAll('[data-ask]').forEach(b => b.onclick = () => askVenue(+b.dataset.ask));
+}
+$('pl-q').addEventListener('input', renderPlaces);
+function askVenue(i) {
+  const v = shownVenues[i], who = new Set(placeFor);
+  show('send');
+  document.querySelector('#vtype [data-v="restaurant"]').click();
+  $('s-vname').value = v.name; $('s-vemail').value = v.email || '';
+  document.querySelectorAll('#s-pick input').forEach(c => { if (!c.disabled) c.checked = who.has(+c.dataset.i); });
+  preview();
+}
+
+/* ── sent ── */
+function renderSent() {
+  if (!sent.length) { $('sent').innerHTML = `<div class="empty"><h3>Nothing sent yet</h3><p>Emails you send to venues appear here.</p></div>`; return; }
+  $('sent').innerHTML = `<div class="log">` + sent.map(s => `<div>
+    <b>${esc(s.vname || s.vemail)}</b><span class="when">${esc(new Date(s.at).toLocaleString('en-AU', { day:'numeric', month:'short', hour:'numeric', minute:'2-digit' }))}</span>
+    <span class="hint" style="grid-column:1/-1">${esc(s.vtype)} · ${esc(s.vemail)} · for ${esc(s.who.join(', '))}</span></div>`).join('') + `</div>`;
+}
+
+if (account && account.email) signedIn(); else show('signin');
+</script>
+</body>
+</html>

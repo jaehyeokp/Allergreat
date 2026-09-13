@@ -1,0 +1,561 @@
+<title>AllerGreat</title>
+
+<style>
+  :root{
+    --bg:#FFFFFF; --card:#FFFFFF; --fill:#F2F2F7; --seg-on:#FFFFFF; --inset:#F6F7F9;
+    --wash:radial-gradient(900px 420px at 8% -8%,#E6F1FF 0%,rgba(230,241,255,0) 62%),radial-gradient(760px 380px at 100% -4%,#FFF0E3 0%,rgba(255,240,227,0) 58%),#FFFFFF;
+    --label:#1C1C1E; --label-2:#3A3A3C; --label-3:#6C6C70; --sep:rgba(60,60,67,.14);
+    --blue:#007AFF; --red:#FF3B30; --green:#28A745; --orange:#FF9500; --yellow:#E6B800;
+    --indigo:#5856D6; --purple:#AF52DE; --pink:#FF2D55; --teal:#1AA3BD; --brown:#A2845E; --gold:#C99A12; --gray:#8E8E93;
+    --blue-soft:rgba(0,122,255,.10); --red-soft:rgba(255,59,48,.09); --green-soft:rgba(52,199,89,.13); --orange-soft:rgba(255,149,0,.12);
+    --nav:rgba(255,255,255,.82);
+    --shadow:0 0 0 1px rgba(60,60,67,.09),0 2px 4px rgba(0,0,0,.03),0 10px 28px rgba(20,40,80,.06);
+    --r:18px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--wash);color:var(--label);
+       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+       font-size:17px;line-height:1.47;-webkit-font-smoothing:antialiased}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+  h1,h2,h3,h4{margin:0;text-wrap:balance;font-family:inherit}
+  p{margin:0}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+  [hidden]{display:none!important}
+
+
+  .chip{--c:var(--blue);display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:15px;font-weight:500;
+        padding:8px 14px;border-radius:999px;border:0;background:var(--fill);color:var(--label);cursor:pointer;
+        transition:background .15s ease,color .15s ease,transform .1s ease;-webkit-tap-highlight-color:transparent}
+  .chip::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+  .chip[aria-pressed="true"]{background:var(--c);color:#fff}
+  .chip[aria-pressed="true"]::before{background:#fff;opacity:.85}
+  .chip:active{transform:scale(.95)}
+  .tok{--c:var(--gray);display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;
+       white-space:nowrap;background:var(--fill);color:var(--label-2)}
+  @supports (background:color-mix(in srgb,red 10%,transparent)){
+    .tok{background:color-mix(in srgb,var(--c) 15%,transparent);color:color-mix(in srgb,var(--c) 72%,var(--label))}
+  }
+  .tok.on,.tok.hot.on{background:var(--c);color:#fff}
+  .tok.on:not([data-a]){--c:var(--red)}
+  .tok.ok{--c:var(--green)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:11px 20px;border-radius:13px;
+       border:0;background:var(--blue);color:#fff;font:inherit;font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;
+       transition:transform .1s ease,opacity .15s ease;-webkit-tap-highlight-color:transparent}
+  .btn:active{transform:scale(.97);opacity:.85}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .btn.ghost{background:var(--blue-soft);color:var(--blue)}
+  .btn.red{background:var(--red);color:#fff}
+  .btn .arw{opacity:.75}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 100px}
+  header.top{padding:96px 0 0;display:flex;flex-direction:column;gap:18px}
+  .brand{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;gap:12px;
+         padding:10px max(20px,calc((100vw - 1080px)/2 + 20px));background:var(--nav);
+         -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--sep)}
+  .brand-mark{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:700;letter-spacing:-.02em}
+  .brand-mark::before{content:"";width:28px;height:28px;border-radius:8px;flex:none;
+         background:linear-gradient(140deg,var(--orange),var(--red) 60%,var(--pink))}
+  .brand-tag{font-size:13px;color:var(--label-3)}
+  .brand .btn{min-height:34px;border-radius:999px}
+  @media (max-width:640px){.brand-tag{display:none}}
+  h1{font-size:clamp(34px,6.2vw,58px);font-weight:800;letter-spacing:-.032em;line-height:1.04}
+  h2{font-size:clamp(24px,3.4vw,32px);font-weight:700;letter-spacing:-.024em;line-height:1.12}
+  h3{font-size:17px;font-weight:600;letter-spacing:-.01em}
+  .lede{font-size:clamp(17px,2.2vw,20px);color:var(--label-2);max-width:58ch}
+  section{padding:44px 0 0}
+  .sec-head{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+  section > p{color:var(--label-2);max-width:66ch}
+  .eyebrow{--c:var(--blue);display:inline-flex;align-self:flex-start;align-items:center;gap:8px;font-size:12.5px;font-weight:700;
+           letter-spacing:.04em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:var(--fill);color:var(--c)}
+  @supports (background:color-mix(in srgb,red 10%,transparent)){.eyebrow{background:color-mix(in srgb,var(--c) 13%,transparent)}}
+  .eyebrow::before{content:attr(data-step);opacity:.65;font-variant-numeric:tabular-nums}
+  .eyebrow[data-step="01"]{--c:var(--red)} .eyebrow[data-step="02"]{--c:var(--orange)}
+  .eyebrow[data-step="03"]{--c:var(--green)} .eyebrow[data-step="04"]{--c:var(--blue)} .eyebrow[data-step="05"]{--c:var(--purple)}
+
+  .tool{background:var(--card);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;margin-top:26px}
+  .tool-head{padding:20px 20px 4px;display:flex;flex-direction:column;gap:4px}
+  .tool-head p{font-size:15px;color:var(--label-3)}
+  .tool-body{padding:14px 20px 20px;display:flex;flex-direction:column;gap:16px}
+  .picker{display:flex;flex-wrap:wrap;gap:8px}
+
+  .verdict{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 18px;border-radius:16px;background:var(--fill)}
+  .verdict.hit{background:var(--red-soft)} .verdict.clear{background:var(--green-soft)}
+  .v-num{font-size:44px;font-weight:800;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .verdict.hit .v-num{color:var(--red)} .verdict.clear .v-num{color:var(--green)}
+  .v-txt{font-size:16px;color:var(--label-2);max-width:48ch;flex:1;min-width:200px}
+  .v-txt strong{color:var(--label)}
+
+  .rows{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+  .tool .rows{box-shadow:none;background:var(--inset);border-radius:14px}
+  .row{position:relative;display:grid;grid-template-columns:1fr auto;gap:6px 14px;padding:14px 16px;align-items:start}
+  .row + .row::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--sep)}
+  .row.match{background:var(--red-soft)}
+  .row-t{font-size:15.5px;font-weight:600;line-height:1.35}
+  .row.match .row-t::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:8px;vertical-align:.12em}
+  .row-m{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--label-3)}
+  .row-m a{color:var(--blue);text-decoration:none}
+  .toks{display:flex;flex-wrap:wrap;gap:5px;justify-self:end}
+  @media (max-width:620px){.row{grid-template-columns:1fr}.toks{justify-self:start}}
+
+  .figure{display:grid;grid-template-columns:auto 1fr;gap:8px 22px;align-items:center;background:var(--card);border-radius:22px;
+          padding:22px 24px;margin-top:16px;box-shadow:var(--shadow)}
+  .stat-n{font-size:clamp(46px,8vw,62px);font-weight:800;line-height:1;letter-spacing:-.045em;font-variant-numeric:tabular-nums;
+          background:linear-gradient(135deg,var(--orange),var(--red) 55%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat-b{font-size:16px;color:var(--label-2)}
+  .stat-b em{font-style:normal;color:var(--label);font-weight:600}
+  @media (max-width:560px){.figure{grid-template-columns:1fr}}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+  .step{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+  .step .n{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.03em;padding:4px 10px;border-radius:999px;color:#fff;background:var(--blue)}
+  .step:nth-child(2) .n{background:var(--indigo)} .step:nth-child(3) .n{background:var(--green)}
+  .step p{font-size:15px;color:var(--label-2)}
+  @media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .card{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+  .card-sub{font-size:14px;color:var(--label-3)}
+  .prep{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--label-2)}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .dot.good{background:var(--green)} .dot.mid{background:var(--orange)} .dot.low{background:var(--gray)}
+  .card-note{font-size:14.5px;color:var(--label-2)}
+  .card-foot{padding-top:10px;border-top:1px solid var(--sep);font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--label-3)}
+
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+  .btn-note{font-size:14px;color:var(--label-3)}
+  .state{background:var(--card);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+  .state p{font-size:15px;color:var(--label-2)}
+  .warn{background:var(--orange-soft);border-radius:16px;padding:14px 16px;font-size:15px;margin-top:16px;color:var(--label-2)}
+  .warn strong{color:var(--label)}
+
+  .film{background:var(--card);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+  .film-frame{position:relative;aspect-ratio:16/9;background:#000}
+  .film-frame iframe,.film-frame video{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .film-cap{padding:14px 18px;font-size:14.5px;color:var(--label-2);display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+  .film-cap .mono{font-size:12px;color:var(--label-3)}
+
+  footer{padding:32px 0 0;margin-top:52px;border-top:1px solid var(--sep);display:flex;flex-direction:column;gap:14px}
+  footer p{font-size:13.5px;color:var(--label-3);max-width:76ch}
+  .foot-links{display:flex;flex-wrap:wrap;gap:18px;font-size:15px}
+  footer a{color:var(--blue);text-decoration:none}
+  /* allergen identity colours — the same allergen is the same colour everywhere */
+  :is(.chip,.tok)[data-a="peanuts"]{--c:var(--orange)} :is(.chip,.tok)[data-a="tree nuts"]{--c:var(--brown)} :is(.chip,.tok)[data-a="milk"]{--c:var(--blue)}
+  :is(.chip,.tok)[data-a="egg"]{--c:var(--gold)} :is(.chip,.tok)[data-a="soy"]{--c:var(--green)} :is(.chip,.tok)[data-a="wheat/gluten"]{--c:#B7791F}
+  :is(.chip,.tok)[data-a="sesame"]{--c:var(--teal)} :is(.chip,.tok)[data-a="fish"]{--c:var(--indigo)} :is(.chip,.tok)[data-a="shellfish"]{--c:var(--pink)}
+  :is(.chip,.tok)[data-a="lupin"]{--c:var(--purple)} :is(.chip,.tok)[data-a="sulphites"]{--c:var(--gray)}
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <span class="brand-mark">AllerGreat</span>
+      <a class="btn ghost" href="app.html" style="margin-left:auto;padding:7px 14px;font-size:13.5px">Open the app</a>
+      <span class="brand-tag">food recall &amp; medicine shortage alerts &middot; australia</span>
+    </div>
+    <h1>Recalls are announced while you're asleep.</h1>
+    <p class="lede">
+      Pick your allergens below and see, right now, which of the most recent official
+      Australian recalls would have reached you &mdash; and which ones we'd have kept quiet about.
+    </p>
+  </header>
+
+  <section style="border-top:0;padding-top:30px">
+    <div class="tool">
+      <div class="tool-head">
+        <h3>What would we have told you?</h3>
+        <p>Live data from the Food Standards Australia New Zealand recall feed. Nothing to sign up for.</p>
+      </div>
+      <div class="tool-body">
+        <div class="picker" id="picker" role="group" aria-label="Select your allergens"></div>
+        <div id="verdict"></div>
+        <div id="recalls"></div>
+      </div>
+    </div>
+
+    <div class="figure">
+      <span class="stat-n" id="bigstat">7<span style="font-size:24px;letter-spacing:0">/10</span></span>
+      <span class="stat-b">
+        Of the most recent Australian food recalls, <em id="bigtxt">seven in ten</em> were caused by
+        an allergen left off the label &mdash; peanut in chilli oil sold nationally, egg in banana
+        bread, milk in brioche rolls.
+      </span>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow" data-step="01">The problem</span>
+      <h2>Subscribing to every recall is the same as ignoring every recall.</h2>
+    </div>
+    <p>
+      You can subscribe to the government feed today. Then you get metal fragments, listeria,
+      mould, and ten allergens that have nothing to do with you. Within a month you stop reading
+      them &mdash; and the one that mattered arrives in a folder you've learned to skip.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <span class="n">01</span><h3>You register once</h3>
+        <p>Tick your allergens, how severe your reaction is, and the autoinjector you carry.</p>
+      </div>
+      <div class="step">
+        <span class="n">02</span><h3>We read two official feeds</h3>
+        <p>Food recalls from FSANZ, medicine shortages from the TGA &mdash; including the names
+           allergens hide behind, like casein for milk.</p>
+      </div>
+      <div class="step">
+        <span class="n">03</span><h3>You hear from us only if it's yours</h3>
+        <p>Every email quotes the official notice word for word and links to the source.
+           Anaphylaxis gets a different email than a mild intolerance.</p>
+      </div>
+    </div>
+    <div class="btn-row">
+      <a class="btn" href="https://jaehyeok.app.n8n.cloud/form/allergy-profile" target="_blank" rel="noopener">
+        Register your allergies <span class="arw">&rarr;</span></a>
+      <a class="btn ghost" href="app.html">Open the family app <span class="arw">&rarr;</span></a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow" data-step="02">Medicine supply</span>
+      <h2>An autoinjector you can't replace is its own emergency.</h2>
+    </div>
+    <p style="margin-bottom:18px">
+      We watch the Therapeutic Goods Administration shortage feed too. Finding out at the pharmacy
+      counter is too late; finding out three weeks early means you can get a prescription changed.
+    </p>
+    <div class="steps" style="margin:0 0 18px">
+      <div class="step">
+        <span class="n">WATCHED FOR</span><h3>Every brand, not just yours</h3>
+        <p>Register an EpiPen and you still hear about an Anapen or generic adrenaline shortage
+           &mdash; because that is what a pharmacist would switch you to.</p>
+        <div class="toks" style="justify-self:start">
+          <span class="tok">EpiPen</span><span class="tok">EpiPen Jr</span><span class="tok">Anapen</span>
+          <span class="tok">Anapen Junior</span><span class="tok">adrenaline</span></div>
+      </div>
+      <div class="step">
+        <span class="n">EXPIRY</span><h3>Before it runs out in your bag</h3>
+        <p>An autoinjector lasts 12&ndash;18 months. Give us the date on the box and we remind you
+           at 90, 60, 30 and 7 days &mdash; once each, never daily.</p>
+      </div>
+      <div class="step">
+        <span class="n">SILENCE</span><h3>No news is checked news</h3>
+        <p>If nothing below involves an autoinjector, nobody who carries one heard from us.
+           That quiet is the product working.</p>
+      </div>
+    </div>
+    <div id="shortages"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow" data-step="03">Eating out</span>
+      <h2>Restaurants that have told us what their kitchen can do.</h2>
+    </div>
+    <p style="margin-bottom:18px">
+      Filter by the allergen you need accommodated. Every listing is written by the restaurant
+      itself &mdash; we don't guess from menus, because menus don't carry allergen information
+      in the first place.
+    </p>
+    <div class="picker" id="rpicker" role="group" aria-label="Filter restaurants by allergen"></div>
+    <div id="dir" style="margin-top:18px"></div>
+    <div class="warn">
+      <strong>We never describe a venue as safe.</strong>
+      These are declarations by the restaurant, not inspections by us. Always confirm with staff
+      before you order.
+    </div>
+    <div class="btn-row">
+      <a class="btn ghost" href="https://jaehyeok.app.n8n.cloud/form/restaurant" target="_blank" rel="noopener">
+        List your restaurant <span class="arw">&rarr;</span></a>
+      <span class="btn-note">Free during the pilot.</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow" data-step="04">Start</span>
+      <h2>One form. Then you can forget about us.</h2>
+    </div>
+    <p>
+      That's the point. There's nothing to open and no feed to scroll. An app you have to remember
+      to check would recreate the exact problem we're solving.
+    </p>
+    <div class="btn-row">
+      <a class="btn" href="https://jaehyeok.app.n8n.cloud/form/allergy-profile" target="_blank" rel="noopener">
+        Register your allergies <span class="arw">&rarr;</span></a>
+      <a class="btn ghost" href="https://jaehyeok.app.n8n.cloud/form/unsubscribe" target="_blank" rel="noopener">
+        Unsubscribe</a>
+    </div>
+  </section>
+
+  <section id="watch" hidden>
+    <div class="sec-head">
+      <span class="eyebrow" data-step="05">See it run</span>
+      <h2>Ninety seconds, start to finish, on the real system.</h2>
+    </div>
+    <p style="margin-bottom:18px">
+      A signup, a live government recall, the email that lands &mdash; and the person with a
+      shellfish allergy whose phone stays silent, because nothing in that recall was theirs.
+    </p>
+    <div class="film">
+      <div class="film-frame" id="film"></div>
+      <div class="film-cap"><span>Recorded on the working automation, not a mock-up.</span>
+        <span class="mono">n8n &middot; FSANZ &middot; TGA &middot; Google Sheets &middot; Gmail</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-links">
+      <a href="https://www.foodstandards.gov.au/food-recalls" target="_blank" rel="noopener">FSANZ recall notices &nearr;</a>
+      <a href="https://www.tga.gov.au/safety/shortages" target="_blank" rel="noopener">TGA shortages &nearr;</a>
+      <a href="https://jaehyeok.app.n8n.cloud/form/unsubscribe" target="_blank" rel="noopener">Unsubscribe</a>
+    </div>
+    <p>
+      AllerGreat is an alerting service, not medical advice, and not a substitute for reading the
+      label. Alerts are generated from official Australian government data. Restaurant listings are
+      self-declared by each venue and are not verified by us. No personal allergy profile appears on
+      this page &mdash; yours lives in your inbox, not in a public URL. If you are having a reaction,
+      use your adrenaline autoinjector and call 000.
+    </p>
+  </footer>
+</div>
+
+<script>
+/* ──────────────────────────────────────────────────────────
+   Reads the same tables the automation writes to, so what you
+   see here is exactly what the alerting engine is working from.
+
+   Only the two non-personal tabs are published. User profiles,
+   send logs and error logs stay private.
+
+   To publish a tab: Sheet → File → Share → Publish to web →
+   pick the tab → CSV → paste the URL below.
+   ────────────────────────────────────────────────────────── */
+const SHEET_ID = '1mJPKmqp3Ly0C6kC4gD7iYjaD9Vtytvzq3InJDE4X6e0';
+const PUB = { recalls:'', restaurants:'' };   // optional published-CSV overrides
+
+// headers=1 is not optional. Without it Google guesses how many
+// leading rows are header, and on an all-text tab like restaurants
+// it guesses wrong and eats real listings.
+const url = (tab, override) => override ||
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tab)}&headers=1`;
+
+/* ── Demo video ──────────────────────────────────────────────
+   Two ways, no other edits needed:
+     1. Paste a YouTube link (unlisted is fine) between the quotes, OR
+     2. Leave it empty and put a file called demo.mp4 in the same
+        folder as this page before you upload the folder.
+   With neither, the section stays hidden.                        */
+const DEMO_VIDEO = '';
+
+(function loadDemoVideo(){
+  const box = document.getElementById('film'), sec = document.getElementById('watch');
+  const yt = String(DEMO_VIDEO).match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+  if (yt) {
+    box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + yt[1] +
+      '?rel=0" title="AllerGreat demo" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+    sec.hidden = false; return;
+  }
+  const file = DEMO_VIDEO && /\.(mp4|webm|mov)$/i.test(DEMO_VIDEO) ? DEMO_VIDEO : 'demo.mp4';
+  fetch(file, { method: 'HEAD' }).then(r => {
+    if (!r.ok) return;
+    box.innerHTML = '<video controls preload="metadata" playsinline src="' + file + '"></video>';
+    sec.hidden = false;
+  }).catch(() => {});
+})();
+
+const ALLERGENS = ['peanuts','tree nuts','milk','egg','soy','wheat/gluten',
+                   'sesame','fish','shellfish','lupin','sulphites'];
+
+const $ = id => document.getElementById(id);
+let picked = new Set(), rPicked = new Set();
+let recalls = [], shortages = [], venues = [];
+
+function parseCSV(t){
+  const rows=[]; let row=[], cell='', q=false;
+  for(let i=0;i<t.length;i++){ const c=t[i];
+    if(q){ if(c==='"'&&t[i+1]==='"'){cell+='"';i++;} else if(c==='"'){q=false;} else cell+=c; }
+    else if(c==='"'){q=true;}
+    else if(c===','){row.push(cell);cell='';}
+    else if(c==='\n'){row.push(cell);rows.push(row);row=[];cell='';}
+    else if(c!=='\r'){cell+=c;}
+  }
+  if(cell!==''||row.length){row.push(cell);rows.push(row);}
+  return rows;
+}
+function toObjects(text){
+  const rows = parseCSV(text).filter(r=>r.some(c=>c.trim()));
+  if(rows.length<2) return [];
+  const head = rows[0].map(h=>h.trim().toLowerCase());
+  return rows.slice(1).map(r=>{
+    const o={}; head.forEach((h,i)=>{ if(h) o[h]=(r[i]||'').trim(); }); return o;
+  });
+}
+const esc = s => String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = s => { const d=new Date(s); return isNaN(d)?'':d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); };
+
+function makePicker(box, set, onChange){
+  ALLERGENS.forEach(a=>{
+    const b=document.createElement('button');
+    b.className='chip'; b.type='button'; b.textContent=a; b.dataset.a=a; b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',()=>{
+      const on=b.getAttribute('aria-pressed')==='true';
+      b.setAttribute('aria-pressed',String(!on));
+      on?set.delete(a):set.add(a); onChange();
+    });
+    box.appendChild(b);
+  });
+}
+
+/* ── the checker ── */
+function renderRecalls(){
+  if(!recalls.length){
+    $('verdict').innerHTML='';
+    $('recalls').innerHTML=`<div class="state"><p>Recall history hasn't loaded yet. The alerting
+      engine still runs &mdash; this page is just the window onto it.</p></div>`;
+    return;
+  }
+  const matched = recalls.filter(r => [...picked].some(a => r.allergens.includes(a)));
+  const n = matched.length, total = recalls.length;
+
+  let cls, num, txt;
+  if(!picked.size){
+    cls=''; num=total;
+    txt=`recent allergen recalls on file. <strong>Pick your allergens above</strong> to see which
+         of them would have reached you.`;
+  } else if(n===0){
+    cls='clear'; num=0;
+    txt=`of these ${total} recalls involve <strong>${esc([...picked].join(', '))}</strong>.
+         You'd have heard nothing from us &mdash; and that silence is the product.`;
+  } else {
+    cls='hit'; num=n;
+    txt=`of these ${total} recalls involve <strong>${esc([...picked].join(', '))}</strong>.
+         Each one would have arrived as an email quoting the official notice.`;
+  }
+  $('verdict').innerHTML=`<div class="verdict ${cls}"><span class="v-num">${num}</span>
+    <span class="v-txt">${txt}</span></div>`;
+
+  $('recalls').innerHTML=`<div class="rows">` + recalls.map(r=>{
+    const hit = [...picked].some(a=>r.allergens.includes(a));
+    return `<div class="row${hit?' match':''}">
+      <span class="row-t">${esc(r.title)}</span>
+      <span class="toks">${r.allergens.map(a=>
+        `<span class="tok${picked.has(a)?' on':''}" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</span>
+      <span class="row-m">${esc(fmt(r.published))}
+        ${r.link?`&middot; <a href="${esc(r.link)}" target="_blank" rel="noopener">official notice &nearr;</a>`:''}
+      </span></div>`;
+  }).join('')+`</div>`;
+}
+
+/* ── TGA shortages ──
+   The TGA feed sends no CORS headers, so the browser cannot read it
+   directly. The automation reads it and writes each alert to the
+   sheet; this page shows exactly what the automation saw.          */
+const INJ = /adrenalin|epinephrin|epipen|anapen|auto-?\s?injector/i;
+function renderShortages(){
+  if(!shortages.length){
+    $('shortages').innerHTML=`<div class="state">
+      <h3>The morning medicine check hasn't written today's results yet</h3>
+      <p>It reads every current TGA shortage alert and flags anything involving an adrenaline
+         autoinjector. Results appear here as soon as it runs.</p></div>`;
+    return;
+  }
+  const inj = shortages.filter(s => INJ.test(s.title));
+  const last = shortages.map(s => Date.parse(s.processed_at)).filter(Boolean).sort((a,b)=>b-a)[0];
+  const checked = last ? new Date(last).toLocaleString('en-AU',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}) : '';
+  const verdict = inj.length
+    ? `<div class="verdict hit"><span class="v-num">${inj.length}</span><span class="v-txt">of
+         ${shortages.length} current TGA shortage alerts involve an <strong>adrenaline autoinjector</strong>.
+         Everyone who registered one has been emailed.</span></div>`
+    : `<div class="verdict clear"><span class="v-num">0</span><span class="v-txt">of
+         ${shortages.length} current TGA shortage alerts involve an adrenaline autoinjector.
+         <strong>Nobody who carries one was emailed</strong>${checked ? ' &mdash; checked ' + esc(checked) : ''}.</span></div>`;
+  const list = [...inj, ...shortages.filter(s => !INJ.test(s.title))];
+  $('shortages').innerHTML = verdict + `<div class="rows" style="margin-top:14px">` + list.map(s=>`
+    <div class="row${INJ.test(s.title)?' match':''}">
+      <span class="row-t">${esc(s.title)}</span>
+      <span class="toks"><span class="tok ${INJ.test(s.title)?'on':'ok'}">${INJ.test(s.title)?'AUTOINJECTOR':'TGA'}</span></span>
+      <span class="row-m">${esc(fmt(s.published))}
+        ${s.link?`&middot; <a href="${esc(s.link)}" target="_blank" rel="noopener">official alert &nearr;</a>`:''}
+      </span></div>`).join('')+`</div>`;
+}
+
+/* ── restaurants ── */
+function prep(s){
+  const t=(s||'').toLowerCase();
+  if(t.includes('dedicated')) return ['good','Dedicated preparation area'];
+  if(t.includes('shared'))    return ['mid','Shared area, cleaned between orders'];
+  if(t.includes('no'))        return ['low','No separate preparation area'];
+  return ['low','Preparation area not stated'];
+}
+function renderVenues(){
+  const shown = venues.filter(v=>[...rPicked].every(a=>v.accommodates.includes(a)));
+  if(!venues.length){
+    $('dir').innerHTML=`<div class="state">
+      <h3>No restaurants listed yet</h3>
+      <p>This directory fills as venues register. Nothing here is scraped &mdash; every entry is
+         written by the restaurant, which is the only way allergen information stays current.</p>
+      <a class="btn ghost" href="https://jaehyeok.app.n8n.cloud/form/restaurant" target="_blank"
+         rel="noopener">List the first one <span class="arw">&rarr;</span></a></div>`;
+    return;
+  }
+  if(!shown.length){
+    $('dir').innerHTML=`<div class="state"><h3>Nothing matches all of those yet</h3>
+      <p>No listed venue has declared it can accommodate
+         <strong>${esc([...rPicked].join(', '))}</strong> together. Try removing one.</p></div>`;
+    return;
+  }
+  $('dir').innerHTML=`<div class="grid">` + shown.map(v=>{
+    const [c,label]=prep(v.prep);
+    return `<article class="card">
+      <div><h3>${esc(v.name)}</h3>
+        <span class="card-sub">${esc(v.suburb)}${v.cuisine?' &middot; '+esc(v.cuisine):''}</span></div>
+      <div class="toks" style="justify-self:start">${v.accommodates.map(a=>
+        `<span class="tok${rPicked.has(a)?' on':''}" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</div>
+      <div class="prep"><span class="dot ${c}"></span>${esc(label)}</div>
+      ${v.notes?`<p class="card-note">&ldquo;${esc(v.notes)}&rdquo;</p>`:''}
+      <div class="card-foot">SELF-DECLARED BY RESTAURANT &middot; CONFIRM WITH STAFF</div>
+    </article>`;
+  }).join('')+`</div>`;
+}
+
+makePicker($('picker'), picked, renderRecalls);
+makePicker($('rpicker'), rPicked, renderVenues);
+$('recalls').innerHTML=`<div class="state"><p>Loading the recall feed&hellip;</p></div>`;
+$('shortages').innerHTML=`<div class="state"><p>Loading shortage alerts&hellip;</p></div>`;
+$('dir').innerHTML=`<div class="state"><p>Loading listings&hellip;</p></div>`;
+
+fetch(url('processed_recalls', PUB.recalls))
+  .then(r=>{ if(!r.ok) throw 0; return r.text(); })
+  .then(t=>{
+    const rows=toObjects(t).filter(r=>r.title);
+    recalls = rows.filter(r=>r.source!=='tga' && r.allergen_list).map(r=>({
+      title:r.title, link:r.link, published:r.published,
+      allergens:r.allergen_list.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean)
+    }));
+    shortages = rows.filter(r=>r.source==='tga').map(r=>({
+      title:r.title, link:r.link, published:r.published, processed_at:r.processed_at
+    }));
+    // Deliberately not recomputed. The sheet only ever stores allergen
+    // recalls, so a live ratio would always be 7/7. The headline number
+    // is out of everything the feed carried, which is the real finding.
+    renderRecalls(); renderShortages();
+  })
+  .catch(()=>{ recalls=[]; shortages=[]; renderRecalls(); renderShortages(); });
+
+fetch(url('restaurants', PUB.restaurants))
+  .then(r=>{ if(!r.ok) throw 0; return r.text(); })
+  .then(t=>{
+    // Rows created while testing the automation never reach the public directory.
+    venues = toObjects(t).filter(r=>r.name && !/^\s*QA TEST/i.test(r.name) && !/example\.com$/i.test(r.contact_email||'')).map(r=>({
+      name:r.name, suburb:r.suburb, cuisine:r.cuisine, prep:r.prep_area, notes:r.notes,
+      accommodates:(r.allergens_accommodated||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean)
+    }));
+    renderVenues();
+  })
+  .catch(()=>{ venues=[]; renderVenues(); });
+</script>
