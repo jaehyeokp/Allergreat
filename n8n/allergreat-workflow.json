@@ -1,0 +1,3694 @@
+{
+  "name": "AllerGreat",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 1 — SIGNUP\n\nA person registers their allergies once. We normalise whatever they type into a fixed vocabulary of eleven allergen names.\n\n**Why normalisation matters:** if someone writes \"dairy\" and the recall notice says \"milk\", nothing would ever match. The two halves of this product have to speak the same language, or a registered user is silently never alerted.\n\nRejected submissions and storage failures are both recorded. A signup that fails silently is the worst case — the user believes they are protected when they are not.",
+        "height": 640,
+        "width": 1580,
+        "color": 5
+      },
+      "id": "f64662e5-5c66-4f0b-bbaa-ea9b6409d23e",
+      "name": "Sticky — Signup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2 — RECALL MONITOR\n\nEvery hour we read the official Australian government food recall feed, work out which allergen caused each recall, and email only the people it affects.\n\n**Why this can't be a chatbot:** a recall is announced at 3am while you're asleep. You cannot ask an AI about something you don't know happened.\n\n**No LLM is used here, deliberately.** The notices have a fixed structure, so deterministic string matching is more accurate, costs nothing, and cannot fail mid-demo.\n\nEvery failure path is wired: feed unreachable, non-allergen recall, email not delivered. Nothing disappears without a trace.",
+        "height": 700,
+        "width": 3800,
+        "color": 4
+      },
+      "id": "6130e4d3-f724-46d3-9145-f6876db85d03",
+      "name": "Sticky — Recall Monitor",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3 — WATCHDOG\n\nWe monitor our own monitoring.\n\nFor a safety system the most dangerous failure is not an error — it is silence. A user who receives no alerts assumes they are safe. If the feed quietly stopped working three weeks ago, nobody would know.\n\nSo once a day we ask: has the recall monitor processed anything in the last 48 hours? If not, that is an incident.",
+        "height": 520,
+        "width": 1580,
+        "color": 3
+      },
+      "id": "1b7bb67f-22f4-4d58-895b-759c7ded909f",
+      "name": "Sticky — Watchdog",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "AllerGreat — Create your allergy profile",
+        "formDescription": "Register once. We watch the official Australian government food recall feed for you, and email you only when a recall actually affects your allergies. If a recall does not affect you, you hear nothing.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Your name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "you@example.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Select your allergies",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "peanuts"
+                  },
+                  {
+                    "option": "tree nuts"
+                  },
+                  {
+                    "option": "milk"
+                  },
+                  {
+                    "option": "egg"
+                  },
+                  {
+                    "option": "soy"
+                  },
+                  {
+                    "option": "wheat/gluten"
+                  },
+                  {
+                    "option": "sesame"
+                  },
+                  {
+                    "option": "fish"
+                  },
+                  {
+                    "option": "shellfish"
+                  },
+                  {
+                    "option": "lupin"
+                  },
+                  {
+                    "option": "sulphites"
+                  }
+                ]
+              },
+              "multiselect": true,
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Any other allergies not listed above (optional)",
+              "placeholder": "e.g. mustard, celery"
+            },
+            {
+              "fieldLabel": "Adrenaline autoinjector you carry (optional)",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "EpiPen"
+                  },
+                  {
+                    "option": "EpiPen Jr"
+                  },
+                  {
+                    "option": "Anapen"
+                  },
+                  {
+                    "option": "Anapen Junior"
+                  },
+                  {
+                    "option": "other adrenaline autoinjector"
+                  },
+                  {
+                    "option": "none"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Injector expiry date (optional)",
+              "placeholder": "2027-04  or  30/04/2027"
+            },
+            {
+              "fieldLabel": "Other medicines you depend on (optional)",
+              "placeholder": "insulin, Creon"
+            },
+            {
+              "fieldLabel": "How severe is your reaction?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "anaphylaxis"
+                  },
+                  {
+                    "option": "severe"
+                  },
+                  {
+                    "option": "mild"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Suburb or postcode (optional)",
+              "placeholder": "2109"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "path": "allergy-profile",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Your allergy profile is active. Check your inbox for confirmation. From now on we watch the official government recall feed for you."
+            }
+          }
+        }
+      },
+      "id": "155dec69-79f8-4f90-b8df-27aa74f65059",
+      "name": "Allergy Profile Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        272
+      ],
+      "webhookId": "9b5f2ed3-4598-4c98-a8f5-e3d2d104ca6e",
+      "notesInFlow": true,
+      "notes": "Public signup page hosted by n8n. No website needed."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-email",
+              "leftValue": "={{ $json.email || $json.Email || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "email-shape",
+              "leftValue": "={{ $json.email || $json.Email || '' }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "has-allergies",
+              "leftValue": "={{ Object.keys($json).filter(k => /allerg/i.test(k)).map(k => Array.isArray($json[k]) ? $json[k].join(',') : String($json[k] || '')).filter(v => v.trim()).join(',') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "7406c80e-dd42-4495-8e2f-2cde059e75b0",
+      "name": "Validate Submission",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        272
+      ],
+      "notesInFlow": true,
+      "notes": "Scans any field whose name mentions an allergy, so a relabelled form field can never silently reject every signup again."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Public input reaches a spreadsheet. A value starting with = + - or @\n// would be run by Google Sheets as a formula, so it is prefixed with an\n// invisible zero-width space and always stored as plain text.\nfunction safeItems(items) {\n  return items.map(function (it) {\n    var o = {};\n    Object.keys(it.json).forEach(function (k) {\n      var v = it.json[k];\n      o[k] = (typeof v === 'string' && /^[=+\\-@\\t\\r]/.test(v)) ? '\\u200B' + v : v;\n    });\n    return { json: o };\n  });\n}\n\n// ═══════════════════════════════════════════════════════\n//  Normalise Allergens\n//  The picker already returns clean values. The optional\n//  free-text box does not, so everything still goes through\n//  the same alias table before it is stored.\n//\n//  If the signup vocabulary and the recall vocabulary ever\n//  drift apart, a registered user is silently never alerted.\n//  That is why both sides share these exact eleven names.\n// ═══════════════════════════════════════════════════════\n\nconst CANON = {\n  'peanuts':      ['peanut', 'peanuts', 'arachis', 'groundnut', 'groundnuts'],\n  'tree nuts':    ['tree nut', 'tree nuts', 'treenut', 'treenuts', 'nut', 'nuts',\n                   'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',\n                   'pecan', 'pecans', 'pistachio', 'pistachios', 'macadamia',\n                   'macadamias', 'hazelnut', 'hazelnuts', 'brazil nut', 'brazil nuts'],\n  'milk':         ['milk', 'dairy', 'lactose', 'casein', 'whey', 'ghee', 'cheese', 'butter'],\n  'egg':          ['egg', 'eggs', 'albumen', 'ovalbumin'],\n  'sesame':       ['sesame', 'tahini', 'sesame seed', 'sesame seeds'],\n  'soy':          ['soy', 'soya', 'soybean', 'soybeans', 'tofu'],\n  'wheat/gluten': ['wheat', 'gluten', 'wheat gluten', 'coeliac', 'celiac',\n                   'semolina', 'durum', 'spelt', 'farina', 'barley', 'rye'],\n  'fish':         ['fish', 'salmon', 'tuna', 'cod', 'anchovy', 'anchovies'],\n  'shellfish':    ['shellfish', 'crustacean', 'crustaceans', 'prawn', 'prawns',\n                   'shrimp', 'shrimps', 'crab', 'crabs', 'lobster', 'lobsters',\n                   'mollusc', 'molluscs', 'oyster', 'oysters', 'mussel', 'mussels',\n                   'squid', 'scallop', 'scallops'],\n  'lupin':        ['lupin', 'lupins', 'lupine'],\n  'sulphites':    ['sulphite', 'sulphites', 'sulfite', 'sulfites']\n};\n\n// Form keys can be the short name or the full question label.\nfunction pick(obj, keys) {\n  for (const k of keys) {\n    const v = obj[k];\n    if (v !== undefined && v !== null && String(v).trim() !== '') return v;\n  }\n  return '';\n}\n\nconst j = $json;\n\nconst name     = String(pick(j, ['name', 'Name'])).trim();\nconst email    = String(pick(j, ['email', 'Email'])).trim().toLowerCase();\nconst postcode = String(pick(j, ['postcode', 'Suburb or postcode (optional)', 'suburb'])).trim();\nconst rawSev   = String(pick(j, ['severity', 'How severe is your reaction?',\n                                 'How severe? (anaphylaxis / severe / mild)'])).trim().toLowerCase();\n\n// Collect every allergy field by pattern, so the picker and the\n// free-text box are both read no matter how they are labelled.\nconst allergyKeys = Object.keys(j).filter(function (k) { return /allerg/i.test(k); });\nlet picked = [];\nfor (const k of allergyKeys) {\n  const v = j[k];\n  if (Array.isArray(v)) picked = picked.concat(v);\n  else if (String(v || '').trim()) picked = picked.concat(String(v).split(/[,;/]|\\band\\b/i));\n}\nconst typed = '';\n\n// The picker gives an array (or a comma string when only one is chosen).\nlet entries = [];\nif (Array.isArray(picked)) entries = entries.concat(picked);\nelse if (String(picked).trim()) entries = entries.concat(String(picked).split(/[,;]/));\nif (String(typed).trim()) entries = entries.concat(String(typed).split(/[,;/]|\\band\\b/i));\n\nconst normalised = [];\nconst unrecognised = [];\n\nfor (const entry of entries) {\n  const token = String(entry).trim().toLowerCase().replace(/[^a-z\\s/]/g, '').trim();\n  if (!token) continue;\n\n  let matchedTo = '';\n  if (CANON[token]) matchedTo = token;                       // already canonical\n  if (!matchedTo) {\n    for (const canon of Object.keys(CANON)) {\n      if (CANON[canon].indexOf(token) !== -1) { matchedTo = canon; break; }\n    }\n  }\n  if (!matchedTo) {                                          // \"peanut allergy\" etc\n    for (const canon of Object.keys(CANON)) {\n      if (CANON[canon].some(function (a) { return token.indexOf(a) !== -1; })) {\n        matchedTo = canon; break;\n      }\n    }\n  }\n\n  if (matchedTo) {\n    if (normalised.indexOf(matchedTo) === -1) normalised.push(matchedTo);\n  } else {\n    unrecognised.push(token);\n  }\n}\n\n// Default to severe when not stated. Erring on the safe side.\nlet severity = 'severe';\nif (rawSev.indexOf('anaphyla') !== -1) severity = 'anaphylaxis';\nelse if (rawSev.indexOf('mild') !== -1) severity = 'mild';\n\n// Injector and medicines feed the TGA shortage monitor\n// and the expiry reminder. Registering a brand means we also\n// alert on a shortage of that drug under any brand.\nconst injector = String(pick(j, ['Adrenaline autoinjector you carry (optional)',\n                                 'injector_type'])).trim();\nconst expiry   = String(pick(j, ['Injector expiry date (optional)',\n                                 'injector_expiry'])).trim();\nconst otherMed = String(pick(j, ['Other medicines you depend on (optional)',\n                                 'medicines'])).trim();\n\nconst meds = [];\nif (injector && injector.toLowerCase() !== 'none') meds.push(injector.toLowerCase());\notherMed.split(/[,;]/).forEach(function (m) {\n  const t = m.trim().toLowerCase();\n  if (t && meds.indexOf(t) === -1) meds.push(t);\n});\n\nconst userId = 'usr_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);\n\nconsole.log(email + ' -> ' + normalised.join(', ') + ' [' + severity + ']' +\n            (unrecognised.length ? ' | not recognised: ' + unrecognised.join(', ') : ''));\n\nreturn safeItems([{\n  json: {\n    user_id:             userId,\n    name:                name,\n    email:               email,\n    postcode:            postcode,\n    allergens:           normalised.join(','),\n    allergens_display:   normalised.join(', '),\n    unrecognised:        unrecognised.join(', '),\n    severity:            severity,\n    injector_type:       (injector && injector.toLowerCase() !== 'none') ? injector : '',\n    injector_expiry:     expiry,\n    medicines:           meds.join(','),\n    dietary_preferences: '',\n    created_at:          new Date().toISOString()\n  }\n}]);"
+      },
+      "id": "d26fb777-9f2d-490d-9b7b-fca9fbe903d3",
+      "name": "Normalise Allergens",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        192
+      ],
+      "notesInFlow": true,
+      "notes": "\"dairy\" becomes milk. \"coeliac\" becomes wheat/gluten."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "users",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "27cb4b3e-7c56-44fc-90a1-3e207f09493d",
+      "name": "Store Profile",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        192
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "TAB: users"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalise Allergens').item.json.email }}",
+        "subject": "Your AllerGreat allergy profile is active",
+        "message": "=<p>Hi {{ $('Normalise Allergens').item.json.name }},</p>\n\n<p>Your allergy profile is now active. We recorded:</p>\n\n<p><strong>{{ $('Normalise Allergens').item.json.allergens_display }}</strong></p>\n\n<p>From now on we monitor the official Australian government food recall feed on your behalf. When a recall involves one of your allergens, you will get an email containing the product, the exact wording of the official notice, and a link to the source.</p>\n\n<p><strong>When a recall does not affect you, you will hear nothing.</strong> That is deliberate. Alerting you about every recall would train you to ignore all of them.</p>\n\n<hr>\n<p style=\"font-size:12px;color:#666\">AllerGreat is an alerting service, not medical advice. Always check the official recall notice and confirm allergen information with manufacturers and restaurant staff.<br><br>You can unsubscribe at any time: <a href=\"https://your-instance.app.n8n.cloud/form/unsubscribe\">https://your-instance.app.n8n.cloud/form/unsubscribe</a></p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "f33448c8-6bde-4a0b-ade7-326bfde6683a",
+      "name": "Send Confirmation",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        192
+      ],
+      "notesInFlow": true,
+      "webhookId": "f3eabbf5-f87d-40a7-a536-9d40e0eeb3c4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Tells the user up front that silence means safety."
+    },
+    {
+      "parameters": {
+        "jsCode": "// The profile could not be saved. This is the one failure the\n// user must be protected from, because they would otherwise\n// believe they are covered when they are not.\nreturn [{\n  json: {\n    timestamp:     new Date().toISOString(),\n    node_name:     'Store Profile',\n    error_message: 'Could not write profile to the users sheet: ' + String($json.error || 'unknown error'),\n    severity:      'critical'\n  }\n}];"
+      },
+      "id": "244bd160-2515-40ea-aff9-ac68d6ed8bd1",
+      "name": "Describe Storage Failure",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "system_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "5f74d646-f1e0-4802-ba48-4b511c1466bf",
+      "name": "Log Storage Failure",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        368
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: system_log"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Explain the rejection in terms the operator can act on.\n// Fields are scanned by pattern, not by exact label.\nconst j = $json;\nconst email = String(j.email || j.Email || '').trim();\nconst allerg = Object.keys(j)\n  .filter(function (k) { return /allerg/i.test(k); })\n  .map(function (k) { return Array.isArray(j[k]) ? j[k].join(',') : String(j[k] || ''); })\n  .filter(function (v) { return v.trim(); })\n  .join(',');\n\nconst reasons = [];\nif (!email) reasons.push('missing email');\nelse if (email.indexOf('@') === -1) reasons.push('malformed email');\nif (!allerg) reasons.push('no allergens given');\n\nreturn [{ json: {\n  timestamp:     new Date().toISOString(),\n  node_name:     'Validate Submission',\n  error_message: 'Rejected signup: ' + (reasons.join('; ') || 'unknown') +\n                 ' | fields: ' + Object.keys(j).join(', '),\n  severity:      'warning'\n}}];"
+      },
+      "id": "20641e23-51a7-4d90-93ea-db40e8dc0f22",
+      "name": "Describe Invalid Submission",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "system_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "c6231f06-4097-4225-abb4-1d6eaf015a3b",
+      "name": "Log Invalid Submission",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        528
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: system_log"
+    },
+    {
+      "parameters": {},
+      "id": "a5a269e5-39f1-49d2-9fa9-c4ca34d3ab9b",
+      "name": "Run Recall Check (Demo)",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        880
+      ],
+      "notesInFlow": true,
+      "notes": "Use this on stage. Fires instantly."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "727adde9-31ca-415f-b490-1de089355019",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        1072
+      ],
+      "notesInFlow": true,
+      "notes": "Runs only when the workflow is Active."
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "processed_recalls",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "28fcb2c7-607f-4e0e-9813-da287705a1e8",
+      "name": "Get Processed Recalls",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        976
+      ],
+      "alwaysOutputData": true,
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "TAB: processed_recalls — every guid we already handled."
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Demo Controls').first().json.break_feed ? 'https://www.foodstandards.gov.au/feed-unavailable-simulated.xml' : 'https://www.foodstandards.gov.au/food-recalls-rss.xml' }}",
+        "options": {}
+      },
+      "id": "6b1b5889-72cb-4ab7-9e32-93272ddd781f",
+      "name": "RSS Read",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        976
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "onError": "continueErrorOutput",
+      "notes": "Official government feed. 3 retries, then the error branch. URL comes from Demo Controls so the failure can be shown on stage."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Extract Allergens\n//  Deterministic parsing. No LLM by design: the notices\n//  have a fixed structure, so string matching is more\n//  accurate, costs nothing, and cannot fail mid-demo.\n// ═══════════════════════════════════════════════════════\n\n// Same eleven canonical names the signup form produces.\n// The arrays are the names an allergen hides behind on a\n// label — casein is milk, arachis is peanut. Without these\n// we would tell a milk-allergic user a casein product is\n// unrelated to them.\nconst ALLERGENS = {\n  'peanuts':      ['peanut', 'arachis', 'groundnut'],\n  'tree nuts':    ['tree nut', 'almond', 'cashew', 'walnut', 'pecan', 'pistachio', 'macadamia', 'hazelnut', 'brazil nut'],\n  'milk':         ['milk', 'dairy', 'casein', 'whey', 'lactose', 'ghee'],\n  'egg':          ['egg', 'albumen'],\n  'soy':          ['soy', 'soya', 'soybean'],\n  'wheat/gluten': ['wheat', 'gluten', 'semolina', 'durum', 'spelt', 'farina'],\n  'sesame':       ['sesame', 'tahini'],\n  'fish':         ['fish'],\n  'shellfish':    ['shellfish', 'crustacean', 'prawn', 'shrimp', 'crab', 'lobster', 'mollusc'],\n  'lupin':        ['lupin'],\n  'sulphites':    ['sulphite', 'sulfite']\n};\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const d = item.json;\n\n  // contentSnippet is the clean plain-text version.\n  // Never use `content` — that field is raw HTML.\n  const snippet = String(d.contentSnippet || '').replace(/\\s+/g, ' ');\n\n  // Every notice follows the same structure:\n  //   Problem: ... / Food safety hazard: ... / What to do: ...\n  const m = snippet.match(/Problem:?\\s*(.*?)(?=Food safety hazard|Food Safety Hazard|What to do)/i);\n  const problem = m ? m[1].trim() : snippet;\n\n  // Recalls also happen for metal, mould and Listeria.\n  // Only undeclared-allergen recalls concern us.\n  const isAllergenRecall = /undeclared allergen/i.test(problem);\n\n  // Collect EVERY allergen named, not just the first.\n  // One recall often lists three, e.g. egg, milk and soy.\n  const found = [];\n  if (isAllergenRecall) {\n    for (const allergen of Object.keys(ALLERGENS)) {\n      const aliases = ALLERGENS[allergen];\n      const hit = aliases.some(function (alias) {\n        // Word boundaries so \"veggie\" never matches \"egg\".\n        return new RegExp('\\\\b' + alias + 's?\\\\b', 'i').test(problem);\n      });\n      if (hit) found.push(allergen);\n    }\n  }\n\n  // Titles look like \"Brand Pty Ltd - Product - 200g\",\n  // sometimes prefixed with \"UPDATED 02.09.26 | \".\n  const title = String(d.title || '').trim();\n  const brand = title.replace(/^UPDATED.*?\\|\\s*/i, '').split(' - ')[0].trim();\n\n  // Best-before info tells a user whether THEIR pack is affected.\n  const dm = snippet.match(/Date [Mm]arking:?\\s*(.*?)(?=Problem|Batch|$)/);\n\n  results.push({\n    json: {\n      guid:               d.guid,\n      title:              title,\n      brand:              brand,\n      link:               d.link,\n      published:          d.isoDate,\n      problem:            problem,\n      is_allergen_recall: isAllergenRecall,\n      allergens:          found,\n      allergen_list:      found.join(','),\n      date_marking:       dm ? dm[1].trim() : '',\n      processed_at:       new Date().toISOString()\n    }\n  });\n}\n\nconst allergenCount = results.filter(function (r) { return r.json.is_allergen_recall; }).length;\nconsole.log(results.length + ' recalls parsed, ' + allergenCount + ' caused by an undeclared allergen');\n\nreturn results;"
+      },
+      "id": "124c43dc-3d05-487d-8fde-65b42cacd81e",
+      "name": "Extract Allergens",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        880
+      ],
+      "notesInFlow": true,
+      "notes": "Catches hidden names: casein = milk, arachis = peanut."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Skip Already Processed\n//  Drops any recall whose guid is already in the sheet, so\n//  nobody is ever alerted twice for the same recall.\n// ═══════════════════════════════════════════════════════\n\n// Every guid we have handled before.\n// Blank rows are ignored so an empty sheet still works.\nconst seen = new Set(\n  $('Get Processed Recalls').all()\n    .map(function (r) { return String((r.json && r.json.guid) || '').trim(); })\n    .filter(function (g) { return g.length > 0; })\n);\n\nconst fresh = [];\n\nfor (const item of $input.all()) {\n  const guid = String(item.json.guid || '').trim();\n  if (seen.has(guid)) continue;\n  fresh.push(item);\n}\n\nconsole.log(seen.size + ' already processed, ' + fresh.length + ' new');\n\nreturn fresh;"
+      },
+      "id": "533e1cba-d519-4650-8b6a-017f1fcdb644",
+      "name": "Skip Already Processed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        880
+      ],
+      "notesInFlow": true,
+      "notes": "To reset for a demo, clear the processed_recalls tab."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "is-allergen",
+              "leftValue": "={{ $json.is_allergen_recall }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "684c274e-f97f-441e-bec5-40f178af5396",
+      "name": "Is Allergen Recall?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        880
+      ],
+      "notesInFlow": true,
+      "notes": "FALSE is handled visibly, not dropped."
+    },
+    {
+      "parameters": {},
+      "id": "44540263-961e-478d-af64-c34cebe6bf58",
+      "name": "Not Allergen Related",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        1072
+      ],
+      "notesInFlow": true,
+      "notes": "Metal, mould, Listeria. Real recalls, just not ours."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "processed_recalls",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "fa043ae4-903a-44e4-882f-c8bae8a396f5",
+      "name": "Store Processed Recall",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1584,
+        800
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: processed_recalls — written even if nobody matches."
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "users",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "0188007e-923d-49f0-afe2-88205dfe979a",
+      "name": "Get Users",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1824,
+        800
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "notes": "TAB: users — profiles created by the signup form above."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Match Users To Recalls\n//  One output item per (user x matching recall).\n//  A user with no overlapping allergen produces NOTHING.\n//  That silence is the product.\n// ═══════════════════════════════════════════════════════\n\nfunction toArray(v) {\n  if (Array.isArray(v)) return v;\n  const s = String(v || '').trim();\n  if (!s) return [];\n  if (s.charAt(0) === '[') {\n    try { const p = JSON.parse(s); if (Array.isArray(p)) return p; } catch (e) {}\n  }\n  return s.split(',');\n}\n\n// ── Live profiles ───────────────────────────────────────────\n// Filling the form again is how a person updates their allergies,\n// so the NEWEST row per (email + name) is the one that counts.\n// Keying on name as well lets a parent register each child under\n// their own address as a separate person.\n// An unsubscribe only counts if it is newer than that email's latest\n// signup — so somebody who comes back is actually back.\nfunction liveProfiles(userItems, unsubItems) {\n  const latest = {};\n  const lastSignup = {};\n  userItems.forEach(function (it) {\n    const u = it && it.json;\n    if (!u || !u.email || String(u.email).indexOf('@') === -1) return;\n    const email = String(u.email).trim().toLowerCase();\n    const key = email + '|' + String(u.name || '').trim().toLowerCase();\n    const t = Date.parse(String(u.created_at || '')) || 0;\n    if (!latest[key] || t >= latest[key].t) latest[key] = { t: t, u: u };\n    if (!lastSignup[email] || t > lastSignup[email]) lastSignup[email] = t;\n  });\n  const optOut = {};\n  (unsubItems || []).forEach(function (it) {\n    const r = it && it.json;\n    if (!r || !r.email) return;\n    const email = String(r.email).trim().toLowerCase();\n    const t = Date.parse(String(r.unsubscribed_at || '')) || Date.now();\n    if (!optOut[email] || t > optOut[email]) optOut[email] = t;\n  });\n  return Object.keys(latest).map(function (k) { return latest[k].u; })\n    .filter(function (u) {\n      const email = String(u.email).trim().toLowerCase();\n      return !(optOut[email] && optOut[email] > (lastSignup[email] || 0));\n    });\n}\n\n// New allergen recalls that survived deduplication.\nconst recalls = $('Skip Already Processed').all()\n  .map(function (i) { return i.json; })\n  .filter(function (r) {\n    return r && r.is_allergen_recall === true &&\n           Array.isArray(r.allergens) && r.allergens.length > 0;\n  });\n\n// How many undeclared-allergen recalls has each brand had before?\n// Nobody publishes this, not even the regulator. A brand that\n// appears repeatedly is a pattern, not an accident.\nconst brandHistory = {};\n$('Get Processed Recalls').all().forEach(function (r) {\n  const b = String((r.json && r.json.brand) || '').trim().toLowerCase();\n  if (b) brandHistory[b] = (brandHistory[b] || 0) + 1;\n});\n\nconst users = liveProfiles($('Get Users').all(), $('Get Unsubscribes').all());\n\nconst out = [];\n\nfor (const recall of recalls) {\n  const recallAllergens = recall.allergens.map(function (a) {\n    return String(a).trim().toLowerCase();\n  });\n\n  const brandKey = String(recall.brand || '').trim().toLowerCase();\n  const priorRecalls = (brandHistory[brandKey] || 0);\n\n  for (const user of users) {\n    const userAllergens = toArray(user.allergens)\n      .map(function (a) { return String(a).trim().toLowerCase(); })\n      .filter(Boolean);\n\n    const matched = userAllergens.filter(function (a) {\n      return recallAllergens.indexOf(a) !== -1;\n    });\n\n    // No overlap -> this user hears nothing. Deliberate.\n    if (matched.length === 0) continue;\n\n    const sev = String(user.severity || 'severe').trim().toLowerCase();\n\n    out.push({\n      json: {\n        name:              user.name || '',\n        email:             String(user.email).trim(),\n        severity:          (sev === 'anaphylaxis' || sev === 'mild') ? sev : 'severe',\n        matched_allergens: matched.join(', '),\n        product:           recall.title,\n        brand:             recall.brand,\n        all_allergens:     recall.allergen_list,\n        date_marking:      recall.date_marking,\n        link:              recall.link,\n        evidence:          recall.problem,\n        recall_guid:       recall.guid,\n        prior_recalls:     priorRecalls,\n        repeat_warning:    priorRecalls >= 2\n          ? 'This brand has had ' + (priorRecalls + 1) +\n            ' undeclared-allergen recalls in our records.'\n          : '',\n        channel:           'email',\n        sent_at:           new Date().toISOString()\n      }\n    });\n  }\n}\n\nconsole.log(recalls.length + ' new allergen recalls x ' + users.length +\n            ' live profiles = ' + out.length + ' alerts');\n\nreturn out;"
+      },
+      "id": "ae24982a-8cfd-4ceb-87ee-e8c9da755448",
+      "name": "Match Users To Recalls",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2064,
+        800
+      ],
+      "notesInFlow": true,
+      "notes": "Only affected users produce output. Everyone else: nothing."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Allergen recall alert: {{ $json.product }}",
+        "message": "=<p>Hi {{ $json.name }},</p>\n\n<p>An official Australian food recall has been issued for a product containing <strong>{{ $json.matched_allergens }}</strong>, which you registered as an allergy.</p>\n\n<p><strong>Product:</strong> {{ $json.product }}<br>\n<strong>Brand:</strong> {{ $json.brand }}<br>\n<strong>Allergens in this recall:</strong> {{ $json.all_allergens }}<br>\n<strong>Affected batches:</strong> {{ $json.date_marking }}</p>\n\n{{ $json.repeat_warning ? '<p style=\"color:#b00\"><strong>Repeat offender:</strong> ' + $json.repeat_warning + '</p>' : '' }}\n\n<p><strong>Why you received this alert</strong><br>\nThe official notice states:<br>\n<em>\"{{ $json.evidence }}\"</em></p>\n\n<p><strong>Official notice:</strong><br>\n<a href=\"{{ $json.link }}\">{{ $json.link }}</a></p>\n\n<p><strong>What to do</strong><br>\nDo not consume this product. Return it to the place of purchase for a full refund. If you are concerned about your health, seek medical advice.</p>\n\n<hr>\n<p style=\"font-size:12px;color:#666\">This is an automated alert generated from official Australian government food recall data. We contact you only when a recall matches an allergen on your profile. Always confirm details against the official notice linked above.<br><br>Do not want these alerts? <a href=\"https://your-instance.app.n8n.cloud/form/unsubscribe\">Unsubscribe here</a>.</p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "e37b961a-43a8-489a-bb59-b199987a1a5b",
+      "name": "Send Recall Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2784,
+        1008
+      ],
+      "notesInFlow": true,
+      "webhookId": "7e977876-e2ad-4be2-bc6d-4a743218ac60",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Quotes the official wording. Never says a product is safe."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sent_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "23833111-ef8d-4c1c-bd74-34d509ecfb4f",
+      "name": "Log Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3264,
+        784
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: sent_log"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sent_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "3c024bcc-4491-4daa-8ec4-21977653a7aa",
+      "name": "Log Failed Send",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3264,
+        1120
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Sending is not the same as arriving."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "system_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "f83cd2f8-7704-4dd6-95cf-a92390fd9c47",
+      "name": "Log System Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        1168
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: system_log"
+    },
+    {
+      "parameters": {
+        "sendTo": "operator@example.com",
+        "subject": "AllerGreat: government recall feed unreachable",
+        "message": "=<p><strong>The Australian government food recall feed could not be reached.</strong></p>\n\n<p>Three retries were attempted, five seconds apart.</p>\n\n<p><strong>Time:</strong> {{ $now.toISO() }}<br>\n<strong>Feed:</strong> https://www.foodstandards.gov.au/food-recalls-rss.xml<br>\n<strong>Error:</strong> {{ $json.error || 'unknown' }}</p>\n\n<p>Registered users are not receiving recall alerts until this is resolved, and they have no way of knowing that. The failure has been written to the system_log tab.</p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "0371a502-246d-4be8-9c2a-44f2e0cb881b",
+      "name": "Notify Operator",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        1168
+      ],
+      "notesInFlow": true,
+      "webhookId": "0b72340c-2438-4c26-b08d-f40d62637686",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Goes to the operator, not to users. A feed outage is our problem to fix, not something to tell 200 people about."
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "920f6118-adea-4d5e-943b-66e9e9ac2914",
+      "name": "Daily Health Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "processed_recalls",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "b845d4af-6b70-48cd-b73c-3d57988969cb",
+      "name": "Read Recall History",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        1584
+      ],
+      "alwaysOutputData": true,
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: processed_recalls"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Feed Health Check\n//\n//  For a safety system the most dangerous failure is not an\n//  error. It is silence. A user who receives no alerts\n//  assumes they are safe. If our feed quietly stopped\n//  working three weeks ago, they would never know.\n//\n//  So we monitor our own monitoring.\n// ═══════════════════════════════════════════════════════\n\nconst STALE_HOURS = 48;\n\n// Only FSANZ recall rows count. TGA shortage rows live in the same\n// tab, and counting them would let a dead recall feed look healthy\n// just because the medicine monitor is still running — which is the\n// precise failure this watchdog exists to catch.\nconst rows = $input.all()\n  .map(function (i) { return i.json; })\n  .filter(function (r) {\n    return r && Object.keys(r).length > 0 && r.processed_at &&\n           String(r.source || '').toLowerCase() !== 'tga';\n  });\n\nlet lastSeenMs = null;\n\nfor (const row of rows) {\n  const t = Date.parse(String(row.processed_at));\n  if (!isNaN(t) && (lastSeenMs === null || t > lastSeenMs)) lastSeenMs = t;\n}\n\n// Never run at all, or the history was cleared.\nif (lastSeenMs === null) {\n  return [{\n    json: {\n      healthy:       false,\n      hours_silent:  null,\n      last_seen:     'never',\n      total_recalls: rows.length,\n      message:       'The recall monitor has no record of ever processing a recall. Either it has never run, or the history was cleared.',\n      checked_at:    new Date().toISOString()\n    }\n  }];\n}\n\nconst hoursSilent = Math.round(((Date.now() - lastSeenMs) / 3600000) * 10) / 10;\nconst healthy = hoursSilent <= STALE_HOURS;\n\nconsole.log('Last processed ' + hoursSilent + ' hours ago. Healthy: ' + healthy);\n\nreturn [{\n  json: {\n    healthy:       healthy,\n    hours_silent:  hoursSilent,\n    last_seen:     new Date(lastSeenMs).toISOString(),\n    total_recalls: rows.length,\n    message: healthy\n      ? 'Recall monitor is healthy. Last processed ' + hoursSilent + ' hours ago.'\n      : 'Recall monitor has processed nothing for ' + hoursSilent + ' hours. Users may believe they are protected when they are not.',\n    checked_at:    new Date().toISOString()\n  }\n}];"
+      },
+      "id": "a09d5cc8-16b1-499b-8d8f-d1e93f545620",
+      "name": "Check Feed Health",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        1584
+      ],
+      "notesInFlow": true,
+      "notes": "Silence is the most dangerous failure mode."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "is-healthy",
+              "leftValue": "={{ $json.healthy }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "23dbe65a-d50c-4827-9738-5ac267154873",
+      "name": "Feed Healthy?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        1584
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "db6bc1ad-f01c-4d69-a40c-a5fa06645b45",
+      "name": "All Good",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        1488
+      ],
+      "notesInFlow": true,
+      "notes": "Healthy. Stay quiet."
+    },
+    {
+      "parameters": {
+        "sendTo": "operator@example.com",
+        "subject": "AllerGreat watchdog: recall monitor may have stopped",
+        "message": "=<p><strong>The AllerGreat recall monitor has not processed anything recently.</strong></p>\n\n<p>{{ $json.message }}</p>\n\n<p><strong>Last processed:</strong> {{ $json.last_seen }}<br>\n<strong>Hours silent:</strong> {{ $json.hours_silent }}<br>\n<strong>Recalls in history:</strong> {{ $json.total_recalls }}<br>\n<strong>Checked at:</strong> {{ $json.checked_at }}</p>\n\n<p>Registered users are currently receiving no alerts, and have no way of knowing that. Check the system_log tab and the last execution of the recall monitor.</p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "27e75615-f0d9-489b-ba52-4872d331c1cb",
+      "name": "Alert Operator",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        1664
+      ],
+      "notesInFlow": true,
+      "webhookId": "0d4c17db-66cc-432c-8285-aee800fc2932",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Goes to the operator. Nobody else needs to know the watchdog tripped — they need it fixed."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "system_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "499b7525-5c05-42e3-beee-ccb58b20e4fb",
+      "name": "Log Stall",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        1664
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: system_log"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// One log row per alert actually sent. Runs once per item.\nlet m;\ntry { m = $('Match Users To Recalls').item.json; }\ncatch (e) { m = $('Match Users To Recalls').first().json; }\n\nreturn { json: {\n  sent_at:           m.sent_at,\n  user_email:        m.email,\n  product:           m.product,\n  matched_allergens: m.matched_allergens,\n  channel:           'email',\n  status:            'sent',\n  recall_guid:       m.recall_guid\n}};"
+      },
+      "id": "87e26b36-87ae-4973-b364-9a3bad521d2f",
+      "name": "Build Sent Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3024,
+        784
+      ],
+      "notesInFlow": true,
+      "notes": "Runs once per item so every single alert gets its own row in sent_log. In all-items mode this logged only the first."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// The alert did not go out. Record it rather than lose it.\nlet m;\ntry { m = $('Match Users To Recalls').item.json; }\ncatch (e) { m = $('Match Users To Recalls').first().json; }\n\nreturn { json: {\n  sent_at:           new Date().toISOString(),\n  user_email:        m.email,\n  product:           m.product,\n  matched_allergens: m.matched_allergens,\n  channel:           'email',\n  status:            'failed: ' + String($json.error || 'delivery error'),\n  recall_guid:       m.recall_guid\n}};"
+      },
+      "id": "4323d82c-e2ce-4a27-9dee-afb471562929",
+      "name": "Build Failed Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3024,
+        1120
+      ],
+      "notesInFlow": true,
+      "notes": "Runs once per item so every single alert gets its own row in sent_log. In all-items mode this logged only the first."
+    },
+    {
+      "parameters": {
+        "jsCode": "// The government feed could not be reached after 3 retries.\nreturn [{ json: {\n  timestamp:      new Date().toISOString(),\n  node_name:      'RSS Read',\n  error_message:  String($json.error || 'Government recall feed unreachable after 3 retries'),\n  severity:       'critical'\n}}];"
+      },
+      "id": "4e431bec-af51-4aae-adf4-015e32f15855",
+      "name": "Build Error Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        1168
+      ],
+      "notesInFlow": true,
+      "notes": "Feed outage becomes a record, not silence."
+    },
+    {
+      "parameters": {
+        "jsCode": "// The monitor has gone quiet for too long.\nconst h = $('Check Feed Health').first().json;\nreturn [{ json: {\n  timestamp:      h.checked_at,\n  node_name:      'Feed Watchdog',\n  error_message:  h.message,\n  severity:       'critical'\n}}];"
+      },
+      "id": "63a39e48-47c5-4637-8124-b8c34b66797a",
+      "name": "Build Stall Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        1808
+      ],
+      "notesInFlow": true,
+      "notes": "Silence is the most dangerous failure mode."
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "unsubscribes",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "897fa366-d227-4ec0-aa06-5c09e76850cd",
+      "name": "Get Unsubscribes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1824,
+        640
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: unsubscribes — people who opted out. Legally required.",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=URGENT allergen recall - {{ $json.matched_allergens }} - {{ $json.product }}",
+        "message": "=<p style=\"font-size:16px\"><strong>Hi {{ $json.name }}, this is urgent.</strong></p>\n\n<p>You registered <strong>{{ $json.matched_allergens }}</strong> as a risk of <strong>anaphylaxis</strong>. An official Australian food recall has just been issued for a product containing it.</p>\n\n<p style=\"background:#ffecec;padding:12px;border-left:4px solid #c00\"><strong>Check your kitchen now. Do not eat this product.</strong><br>If you have eaten it and feel unwell, use your adrenaline autoinjector and call 000.</p>\n\n<p><strong>Product:</strong> {{ $json.product }}<br>\n<strong>Brand:</strong> {{ $json.brand }}<br>\n<strong>Allergens in this recall:</strong> {{ $json.all_allergens }}<br>\n<strong>Affected batches:</strong> {{ $json.date_marking }}</p>\n\n{{ $json.repeat_warning ? '<p style=\"color:#b00\"><strong>Repeat offender:</strong> ' + $json.repeat_warning + '</p>' : '' }}\n\n<p><strong>Why you received this alert</strong><br>\nThe official notice states:<br>\n<em>\"{{ $json.evidence }}\"</em></p>\n\n<p><strong>Official notice:</strong><br>\n<a href=\"{{ $json.link }}\">{{ $json.link }}</a></p>\n\n<p><strong>What to do</strong><br>\nDo not consume this product. Return it for a full refund. If you are concerned about your health, seek medical advice immediately.</p>\n\n<hr>\n<p style=\"font-size:12px;color:#666\">This is an automated alert generated from official Australian government food recall data. We contact you only when a recall matches an allergen on your profile. Always confirm details against the official notice linked above.<br><br>Do not want these alerts? <a href=\"https://your-instance.app.n8n.cloud/form/unsubscribe\">Unsubscribe here</a>.</p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "3fa265f0-0ff4-4e4d-8c73-bcd7cedaba4f",
+      "name": "Send Urgent Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2544,
+        672
+      ],
+      "notesInFlow": true,
+      "webhookId": "567e24ba-832a-4913-8eb4-6ee9bf452f9f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Anaphylaxis path. Same recall, different urgency."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Recall notice: {{ $json.product }} contains {{ $json.matched_allergens }}",
+        "message": "=<p>Hi {{ $json.name }},</p>\n\n<p>A product has been recalled for containing <strong>{{ $json.matched_allergens }}</strong>, which you registered as a mild intolerance. Sharing it in case it is useful.</p>\n\n<p><strong>Product:</strong> {{ $json.product }}<br>\n<strong>Brand:</strong> {{ $json.brand }}<br>\n<strong>Allergens in this recall:</strong> {{ $json.all_allergens }}<br>\n<strong>Affected batches:</strong> {{ $json.date_marking }}</p>\n\n{{ $json.repeat_warning ? '<p style=\"color:#b00\"><strong>Repeat offender:</strong> ' + $json.repeat_warning + '</p>' : '' }}\n\n<p><strong>Why you received this alert</strong><br>\nThe official notice states:<br>\n<em>\"{{ $json.evidence }}\"</em></p>\n\n<p><strong>Official notice:</strong><br>\n<a href=\"{{ $json.link }}\">{{ $json.link }}</a></p>\n\n<p>If you have this product and prefer to avoid it, you can return it for a full refund.</p>\n\n<hr>\n<p style=\"font-size:12px;color:#666\">This is an automated alert generated from official Australian government food recall data. We contact you only when a recall matches an allergen on your profile. Always confirm details against the official notice linked above.<br><br>Do not want these alerts? <a href=\"https://your-instance.app.n8n.cloud/form/unsubscribe\">Unsubscribe here</a>.</p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "77a8a673-7def-402b-bc92-0d26b30972bd",
+      "name": "Send Mild Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2784,
+        832
+      ],
+      "notesInFlow": true,
+      "webhookId": "3327c50d-6b9d-4fc0-9a6a-255469c4f0a9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Mild path. Informative, not alarming - so urgent alerts stay meaningful."
+    },
+    {
+      "parameters": {
+        "content": "## 4 — UNSUBSCRIBE\n\nAustralia's Spam Act requires a working opt-out on automated email. Without this, a registered user can never leave.\n\nThere is also a product reason. An alert somebody does not want is an alert they learn to ignore — and the whole premise of this service is that when we do email you, it matters.",
+        "height": 420,
+        "width": 1340,
+        "color": 6
+      },
+      "id": "3f8c2e1d-c635-468e-b9f3-7830c1894235",
+      "name": "Sticky — Unsubscribe",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "AllerGreat — Unsubscribe",
+        "formDescription": "Enter the email address you registered. We will stop sending you recall alerts immediately. You can register again at any time.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "you@example.com",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "path": "unsubscribe",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "You have been unsubscribed. You will not receive any further recall alerts from AllerGreat."
+            }
+          }
+        }
+      },
+      "id": "478bb2f9-7b2e-4433-9ed3-70d6d63eab76",
+      "name": "Unsubscribe Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        2128
+      ],
+      "webhookId": "0b2df544-20c8-493e-86a5-6a489ebaaedd",
+      "notesInFlow": true,
+      "notes": "Linked from the footer of every alert email."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Public input reaches a spreadsheet. A value starting with = + - or @\n// would be run by Google Sheets as a formula, so it is prefixed with an\n// invisible zero-width space and always stored as plain text.\nfunction safeItems(items) {\n  return items.map(function (it) {\n    var o = {};\n    Object.keys(it.json).forEach(function (k) {\n      var v = it.json[k];\n      o[k] = (typeof v === 'string' && /^[=+\\-@\\t\\r]/.test(v)) ? '\\u200B' + v : v;\n    });\n    return { json: o };\n  });\n}\n\n// Same email, typed differently, is still the same person.\nconst j = $json;\nconst email = String(j.email || j.Email || '').trim().toLowerCase();\n\nreturn safeItems([{ json: {\n  email:          email,\n  unsubscribed_at: new Date().toISOString(),\n  source:         'web form'\n}}]);"
+      },
+      "id": "3841bab8-2767-4169-a5c2-15dcd3e23f7e",
+      "name": "Prepare Unsubscribe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        2128
+      ],
+      "notesInFlow": true,
+      "notes": "Normalises the address so the exclusion actually matches."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "unsubscribes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "0c90e857-f4b0-4c34-9890-87d33b2a9eac",
+      "name": "Record Unsubscribe",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        2128
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: unsubscribes — checked before every send."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Prepare Unsubscribe').item.json.email }}",
+        "subject": "You have been unsubscribed from AllerGreat",
+        "message": "=<p>You will no longer receive food recall alerts from AllerGreat.</p>\n\n<p>To be clear about what this means: the Australian government will keep issuing recalls, and some of them will involve allergens. We simply will not be the ones telling you.</p>\n\n<p>You can register again at any time: <a href=\"https://your-instance.app.n8n.cloud/form/allergy-profile\">https://your-instance.app.n8n.cloud/form/allergy-profile</a></p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "0b178f4c-21c4-4e0d-85ef-357f90ea018f",
+      "name": "Confirm Unsubscribe",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        2128
+      ],
+      "notesInFlow": true,
+      "webhookId": "7e5e47af-a7fa-431c-84a9-089b9dd33f52",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Honest about what unsubscribing costs them."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sev",
+              "leftValue": "={{ $json.severity }}",
+              "rightValue": "anaphylaxis",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "be44ef46-9836-4723-8d3f-474aebb36b4c",
+      "name": "Anaphylaxis?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2304,
+        800
+      ],
+      "notesInFlow": true,
+      "notes": "Anaphylaxis is not the same as a mild intolerance. Same recall, different urgency."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "sev",
+              "leftValue": "={{ $json.severity }}",
+              "rightValue": "mild",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "cbd89713-8a23-4e61-8ddd-32f18a917b4e",
+      "name": "Mild?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2544,
+        912
+      ],
+      "notesInFlow": true,
+      "notes": "Mild goes out informative, not alarming - so urgent alerts stay meaningful."
+    },
+    {
+      "parameters": {
+        "content": "## 5 — RESTAURANT DIRECTORY\n\nRestaurants do not publish allergen data, so scraping their menus returns almost nothing. We flipped it: restaurants register themselves and declare what they can accommodate.\n\nThat is also the business model. Listings are the thing restaurants pay for, and a paying restaurant has a reason to keep its own data current — which is the only way this data stays accurate.\n\n**We never call a venue \"safe\".** Everything here is self-declared by the restaurant and labelled as such. The diner still confirms at the table.",
+        "height": 460,
+        "width": 1820,
+        "color": 7
+      },
+      "id": "a786ba6a-7781-4f47-a623-0030f00b3a09",
+      "name": "Sticky — Restaurants",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2480
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "AllerGreat — List your restaurant",
+        "formDescription": "Tell allergy-aware diners what your kitchen can accommodate. Listings are free during our pilot. You can update or remove your listing at any time.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Restaurant name",
+              "placeholder": "Thai Garden",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Suburb",
+              "placeholder": "Newtown",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Cuisine",
+              "placeholder": "Thai"
+            },
+            {
+              "fieldLabel": "Which allergens can your kitchen accommodate on request?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "peanuts"
+                  },
+                  {
+                    "option": "tree nuts"
+                  },
+                  {
+                    "option": "milk"
+                  },
+                  {
+                    "option": "egg"
+                  },
+                  {
+                    "option": "soy"
+                  },
+                  {
+                    "option": "wheat/gluten"
+                  },
+                  {
+                    "option": "sesame"
+                  },
+                  {
+                    "option": "fish"
+                  },
+                  {
+                    "option": "shellfish"
+                  },
+                  {
+                    "option": "lupin"
+                  },
+                  {
+                    "option": "sulphites"
+                  }
+                ]
+              },
+              "multiselect": true,
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Do you have a separate preparation area for allergen-free orders?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "yes - dedicated area"
+                  },
+                  {
+                    "option": "shared area, cleaned between orders"
+                  },
+                  {
+                    "option": "no"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Anything a diner should know",
+              "fieldType": "textarea",
+              "placeholder": "Our fryer is shared. Ask staff about the curry pastes."
+            },
+            {
+              "fieldLabel": "Contact email",
+              "fieldType": "email",
+              "placeholder": "manager@restaurant.com.au",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "path": "restaurant",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Your listing is live. Allergy-aware diners searching your suburb can now see what your kitchen accommodates. We have emailed you a copy of what you declared."
+            }
+          }
+        }
+      },
+      "id": "81a463c7-d506-4144-86d3-558f8a340591",
+      "name": "Restaurant Listing Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        2608
+      ],
+      "webhookId": "466b75a9-9538-48cd-b98a-d0a6bcbdff3c",
+      "notesInFlow": true,
+      "notes": "Restaurants declare their own data. Nothing here is scraped."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Public input reaches a spreadsheet. A value starting with = + - or @\n// would be run by Google Sheets as a formula, so it is prefixed with an\n// invisible zero-width space and always stored as plain text.\nfunction safeItems(items) {\n  return items.map(function (it) {\n    var o = {};\n    Object.keys(it.json).forEach(function (k) {\n      var v = it.json[k];\n      o[k] = (typeof v === 'string' && /^[=+\\-@\\t\\r]/.test(v)) ? '\\u200B' + v : v;\n    });\n    return { json: o };\n  });\n}\n\n// ═══════════════════════════════════════════════════════\n//  Prepare Listing\n//  Restaurants describe their kitchen in their own words.\n//  We store the declaration exactly as given, but the\n//  allergen list goes through the same eleven canonical\n//  names the recall side uses — otherwise a diner filtering\n//  for \"milk\" would never see a venue that wrote \"dairy\".\n// ═══════════════════════════════════════════════════════\n\nconst CANON = ['peanuts', 'tree nuts', 'milk', 'egg', 'soy', 'wheat/gluten',\n               'sesame', 'fish', 'shellfish', 'lupin', 'sulphites'];\n\nfunction pick(obj, keys) {\n  for (const k of keys) {\n    const v = obj[k];\n    if (v !== undefined && v !== null && String(v).trim() !== '') return v;\n  }\n  return '';\n}\n\nconst j = $json;\n\nconst name    = String(pick(j, ['Restaurant name', 'restaurant_name', 'name'])).trim();\nconst suburb  = String(pick(j, ['Suburb', 'suburb'])).trim();\nconst cuisine = String(pick(j, ['Cuisine', 'cuisine'])).trim();\nconst prep    = String(pick(j, ['Do you have a separate preparation area for allergen-free orders?',\n                                'prep_area'])).trim();\nconst notes   = String(pick(j, ['Anything a diner should know', 'notes'])).trim();\nconst email   = String(pick(j, ['Contact email', 'contact_email', 'email'])).trim().toLowerCase();\n\nconst rawAll = pick(j, ['Which allergens can your kitchen accommodate on request?',\n                        'allergens_accommodated', 'allergens']);\n\nlet entries = Array.isArray(rawAll) ? rawAll : String(rawAll).split(/[,;]/);\nconst accommodated = [];\nfor (const e of entries) {\n  const t = String(e).trim().toLowerCase();\n  if (CANON.indexOf(t) !== -1 && accommodated.indexOf(t) === -1) accommodated.push(t);\n}\n\n// A dedicated prep area is the single biggest factor in\n// cross-contamination risk, so it is stored as its own field\n// rather than buried in free text.\nlet crossContam = 'unknown';\nif (prep.indexOf('dedicated') !== -1) crossContam = 'dedicated area';\nelse if (prep.indexOf('shared') !== -1) crossContam = 'shared area, cleaned between orders';\nelse if (prep === 'no') crossContam = 'no separate area';\n\nconst id = 'res_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);\n\nreturn safeItems([{ json: {\n  restaurant_id:          id,\n  name:                   name,\n  suburb:                 suburb,\n  cuisine:                cuisine,\n  allergens_accommodated: accommodated.join(','),\n  prep_area:              crossContam,\n  notes:                  notes,\n  contact_email:          email,\n  verification:           'self-declared by restaurant',\n  registered_at:          new Date().toISOString()\n}}]);"
+      },
+      "id": "40d7642b-8143-4ca2-bf83-bcf7da1cea68",
+      "name": "Prepare Listing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        2608
+      ],
+      "notesInFlow": true,
+      "notes": "Same eleven allergen names as the recall side, so filtering actually works."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "restaurants",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "00a10dc1-fd79-45b6-8d62-ed66cfe37eca",
+      "name": "Store Listing",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        2608
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: restaurants — the website reads this tab directly."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Prepare Listing').item.json.contact_email }}",
+        "subject": "=Your AllerGreat listing is live - {{ $('Prepare Listing').item.json.name }}",
+        "message": "=<p>Hi {{ $('Prepare Listing').item.json.name }} team,</p>\n\n<p>Your listing is now visible to allergy-aware diners searching {{ $('Prepare Listing').item.json.suburb }}. Here is exactly what you declared:</p>\n\n<p><strong>Allergens you can accommodate:</strong> {{ $('Prepare Listing').item.json.allergens_accommodated }}<br>\n<strong>Preparation area:</strong> {{ $('Prepare Listing').item.json.prep_area }}<br>\n<strong>Notes shown to diners:</strong> {{ $('Prepare Listing').item.json.notes }}</p>\n\n<p>This is shown to diners as <strong>self-declared by the restaurant</strong>, and we always tell them to confirm with your staff before ordering. We do not describe any venue as safe — that is your kitchen's call, not ours.</p>\n\n<p>To correct anything, just submit the form again with the updated details.</p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "aa948fdc-402e-4e25-ba2f-b7875b3887ed",
+      "name": "Confirm Listing",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        2608
+      ],
+      "notesInFlow": true,
+      "webhookId": "392b75ee-35d2-4aa9-bb1f-5181add9d9a3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Shows the restaurant exactly what diners will see."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Demo control.\n// Set break_feed to true to point the recall feed at a dead\n// URL, so the retry / fallback / alert path can be shown on\n// stage instead of only described.\nreturn [{ json: { break_feed: false } }];"
+      },
+      "id": "8037cb2c-55df-4939-ab5b-f9bf8606035e",
+      "name": "Demo Controls",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        976
+      ],
+      "notesInFlow": true,
+      "notes": "Flip break_feed to true on stage to point the feed at a dead URL."
+    },
+    {
+      "parameters": {
+        "content": "## 6 — MEDICINE SHORTAGE MONITOR\n\nA second official feed, from a different regulator. The TGA publishes medicine shortage alerts, and an adrenaline autoinjector going out of stock matters to exactly the same people a peanut recall matters to.\n\nFinding out at the pharmacy counter is too late. Finding out three weeks early means you can get a prescription changed.\n\nSame pattern as the recall monitor, pointed at a different regulator — which is the point: the pipeline is source-agnostic.",
+        "height": 640,
+        "width": 3000,
+        "color": 2
+      },
+      "id": "03a73de6-3f14-4996-b601-4063dbd9036e",
+      "name": "Sticky — Medicine Shortages",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        3152
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "de688426-c119-4a0f-97a2-96a59513cf81",
+      "name": "Daily Medicine Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        3504
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "processed_recalls",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "42f4678e-2cc5-41dc-8027-db1764bb6a5b",
+      "name": "Get Processed Shortages",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        3408
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: processed_recalls — shared history, tagged by source."
+    },
+    {
+      "parameters": {
+        "url": "https://www.tga.gov.au/feeds/alert/medicine-shortage-alerts.xml",
+        "options": {}
+      },
+      "id": "d3312149-4c13-409d-9ffd-a81cd8246ae6",
+      "name": "TGA RSS Read",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        3408
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notesInFlow": true,
+      "onError": "continueErrorOutput",
+      "notes": "Official TGA medicine shortage alerts. Same node type as the recall feed."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Extract Medicines\n//  TGA shortage alerts are prose, not a structured field, so\n//  we read the medicine names straight out of the title and\n//  summary. No LLM: the same reasoning as the recall side.\n//\n//  Adrenaline autoinjectors get their own alias list because\n//  people register the brand they carry, not the drug name.\n// ═══════════════════════════════════════════════════════\n\n// Anything in this list flags the alert as injector-related,\n// which is what most of our users actually carry.\nconst INJECTOR = ['adrenaline', 'epinephrine', 'epipen', 'anapen',\n                  'auto-injector', 'autoinjector', 'auto injector'];\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const d = item.json;\n\n  const title = String(d.title || '').trim();\n  const summary = String(d.contentSnippet || d.content || '')\n    .replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim();\n  const haystack = (title + ' ' + summary).toLowerCase();\n\n  const isInjector = INJECTOR.some(function (w) { return haystack.indexOf(w) !== -1; });\n\n  // Resolved shortages are good news, not an alert.\n  const resolving = /resolv|resolved|has ended/i.test(title);\n\n  results.push({\n    json: {\n      guid:          String(d.guid || d.link || title),\n      source:        'tga',\n      title:         title,\n      brand:         'TGA medicine shortage',\n      summary:       summary,\n      haystack:      haystack,\n      link:          d.link,\n      published:     d.isoDate || d.pubDate,\n      is_injector:   isInjector,\n      resolving:     resolving,\n      allergen_list: isInjector ? 'adrenaline autoinjector' : '',\n      processed_at:  new Date().toISOString()\n    }\n  });\n}\n\nconsole.log(results.length + ' shortage alerts, ' +\n            results.filter(function (r) { return r.json.is_injector; }).length +\n            ' involve adrenaline autoinjectors');\n\nreturn results;"
+      },
+      "id": "9ef0b7b6-9688-4269-8fc4-33ffcb736ab9",
+      "name": "Extract Medicines",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        3312
+      ],
+      "notesInFlow": true,
+      "notes": "Reads medicine names out of the alert text. No LLM, same as the recall side."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Shared history with the recall feed, so an alert is\n// never sent twice regardless of which regulator it came from.\nconst seen = new Set(\n  $('Get Processed Shortages').all()\n    .map(function (r) { return String((r.json && r.json.guid) || '').trim(); })\n    .filter(function (g) { return g.length > 0; })\n);\n\nconst fresh = [];\nfor (const item of $input.all()) {\n  if (seen.has(String(item.json.guid || '').trim())) continue;\n  fresh.push(item);\n}\n\nconsole.log(seen.size + ' already processed, ' + fresh.length + ' new shortage alerts');\nreturn fresh;"
+      },
+      "id": "e52d684b-d565-4324-8b1c-7e0a44260410",
+      "name": "Skip Processed Shortages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        3312
+      ],
+      "notesInFlow": true,
+      "notes": "To replay for a demo, clear processed_recalls."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "processed_recalls",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "1ae58bd0-c111-4601-984e-6e813522dad5",
+      "name": "Store Processed Shortage",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1104,
+        3312
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: processed_recalls — tagged source=tga."
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "users",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "020dc4e3-79b2-42ea-82cd-cce36b57f567",
+      "name": "Get Users For Medicines",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        3312
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: users — the medicines column is what we match on.",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "unsubscribes",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "6f3a3fb1-d4fb-4e56-a729-a2294b629ebc",
+      "name": "Get Unsubscribes For Medicines",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1584,
+        3312
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Opt-outs apply to every kind of alert, not just recalls.",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Match Users To Shortages\n//  A user tells us what they carry or take. We tell them when\n//  the regulator says it is running out — and only then.\n// ═══════════════════════════════════════════════════════\n\nconst INJECTOR_WORDS = ['epipen', 'anapen', 'adrenaline', 'epinephrine',\n                        'auto-injector', 'autoinjector', 'auto injector'];\n\n// ── Live profiles ───────────────────────────────────────────\n// Filling the form again is how a person updates their allergies,\n// so the NEWEST row per (email + name) is the one that counts.\n// Keying on name as well lets a parent register each child under\n// their own address as a separate person.\n// An unsubscribe only counts if it is newer than that email's latest\n// signup — so somebody who comes back is actually back.\nfunction liveProfiles(userItems, unsubItems) {\n  const latest = {};\n  const lastSignup = {};\n  userItems.forEach(function (it) {\n    const u = it && it.json;\n    if (!u || !u.email || String(u.email).indexOf('@') === -1) return;\n    const email = String(u.email).trim().toLowerCase();\n    const key = email + '|' + String(u.name || '').trim().toLowerCase();\n    const t = Date.parse(String(u.created_at || '')) || 0;\n    if (!latest[key] || t >= latest[key].t) latest[key] = { t: t, u: u };\n    if (!lastSignup[email] || t > lastSignup[email]) lastSignup[email] = t;\n  });\n  const optOut = {};\n  (unsubItems || []).forEach(function (it) {\n    const r = it && it.json;\n    if (!r || !r.email) return;\n    const email = String(r.email).trim().toLowerCase();\n    const t = Date.parse(String(r.unsubscribed_at || '')) || Date.now();\n    if (!optOut[email] || t > optOut[email]) optOut[email] = t;\n  });\n  return Object.keys(latest).map(function (k) { return latest[k].u; })\n    .filter(function (u) {\n      const email = String(u.email).trim().toLowerCase();\n      return !(optOut[email] && optOut[email] > (lastSignup[email] || 0));\n    });\n}\n\nconst alerts = $('Skip Processed Shortages').all()\n  .map(function (i) { return i.json; })\n  .filter(function (a) { return a && a.title && !a.resolving; });\n\nconst users = liveProfiles($('Get Users For Medicines').all(),\n                           $('Get Unsubscribes For Medicines').all());\n\nconst out = [];\n\nfor (const alert of alerts) {\n  for (const user of users) {\n    const listed = String(user.medicines || '')\n      .split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);\n\n    if (!listed.length) continue;\n\n    const matched = [];\n    for (const med of listed) {\n      // A brand name matching the alert text is a direct hit.\n      if (alert.haystack.indexOf(med) !== -1) { matched.push(med); continue; }\n      // Someone who registered \"EpiPen\" still wants to hear about\n      // an adrenaline autoinjector shortage under any brand.\n      const userCarriesInjector = INJECTOR_WORDS.some(function (w) {\n        return med.indexOf(w) !== -1;\n      });\n      if (userCarriesInjector && alert.is_injector) matched.push(med);\n    }\n\n    if (!matched.length) continue;\n\n    out.push({\n      json: {\n        name:      user.name || '',\n        email:     String(user.email).trim(),\n        matched:   matched.join(', '),\n        title:     alert.title,\n        summary:   alert.summary,\n        link:      alert.link,\n        guid:      alert.guid,\n        injector:  alert.is_injector === true,\n        sent_at:   new Date().toISOString()\n      }\n    });\n  }\n}\n\nconsole.log(alerts.length + ' active shortages x ' + users.length +\n            ' users = ' + out.length + ' alerts');\n\nreturn out;"
+      },
+      "id": "a7d9b755-8968-4001-b985-f2ad8ab11d62",
+      "name": "Match Users To Shortages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        3312
+      ],
+      "notesInFlow": true,
+      "notes": "Nobody registered for it means nobody hears about it."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Medicine shortage affecting you: {{ $json.title }}",
+        "message": "=<p>Hi {{ $json.name }},</p>\n\n<p>The Therapeutic Goods Administration has issued a shortage alert that involves <strong>{{ $json.matched }}</strong>, which you told us you rely on.</p>\n\n<p><strong>{{ $json.title }}</strong><br>\n{{ $json.summary }}</p>\n\n{{ $json.injector ? '<p style=\"background:#fff4e5;padding:12px;border-left:4px solid #c67c00\"><strong>This involves adrenaline autoinjectors.</strong> Do not wait until your next refill. Speak to your pharmacist now about alternatives, and keep your current device until you have a replacement in hand.</p>' : '' }}\n\n<p><strong>What to do</strong><br>\nTalk to your pharmacist or GP before your current supply runs out. The official alert below lists approved alternatives where they exist.</p>\n\n<p><strong>Official alert:</strong><br>\n<a href=\"{{ $json.link }}\">{{ $json.link }}</a></p>\n\n<hr>\n<p style=\"font-size:12px;color:#666\">Automated alert generated from official Therapeutic Goods Administration shortage data. We contact you only when a shortage involves something on your profile. This is not medical advice.<br><br><a href=\"https://your-instance.app.n8n.cloud/form/unsubscribe\">Unsubscribe</a></p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "13107085-af8c-479f-bad0-c6d85be9b219",
+      "name": "Send Shortage Alert",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2064,
+        3312
+      ],
+      "notesInFlow": true,
+      "webhookId": "3d779788-b77e-4a98-834f-939ca4990366",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Injector shortages get an extra warning block."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// One log row per shortage alert sent.\nlet m;\ntry { m = $('Match Users To Shortages').item.json; }\ncatch (e) { m = $('Match Users To Shortages').first().json; }\n\nreturn { json: {\n  sent_at:           m.sent_at,\n  user_email:        m.email,\n  product:           m.title,\n  matched_allergens: m.matched,\n  channel:           'email',\n  status:            'sent (tga shortage)',\n  recall_guid:       m.guid\n}};"
+      },
+      "id": "a7732b79-238a-4d0b-aaea-6a8bd00971c1",
+      "name": "Build Shortage Sent Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        3216
+      ],
+      "notesInFlow": true,
+      "notes": "Runs once per item so every single alert gets its own row in sent_log. In all-items mode this logged only the first."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sent_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "336a5249-a681-44b3-afda-78e2d32694f5",
+      "name": "Log Shortage Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2544,
+        3216
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: sent_log"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// A shortage alert that failed to send.\nlet m;\ntry { m = $('Match Users To Shortages').item.json; }\ncatch (e) { m = $('Match Users To Shortages').first().json; }\n\nreturn { json: {\n  sent_at:           new Date().toISOString(),\n  user_email:        m.email,\n  product:           m.title,\n  matched_allergens: m.matched,\n  channel:           'email',\n  status:            'failed: ' + String($json.error || 'delivery error'),\n  recall_guid:       m.guid\n}};"
+      },
+      "id": "bc8bb811-fd9c-47f2-88fc-18344048522e",
+      "name": "Build Shortage Fail Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        3408
+      ],
+      "notesInFlow": true,
+      "notes": "Runs once per item so every single alert gets its own row in sent_log. In all-items mode this logged only the first."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sent_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "29171b62-836f-4cf5-919e-10f44a820441",
+      "name": "Log Shortage Failed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2544,
+        3408
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: sent_log"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: {\n  timestamp:     new Date().toISOString(),\n  node_name:     'TGA RSS Read',\n  error_message: String($json.error || 'TGA shortage feed unreachable after 3 retries'),\n  severity:      'critical'\n}}];"
+      },
+      "id": "ecaa192b-99db-47b1-9598-3e882f8bb9b7",
+      "name": "Build TGA Error Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        3600
+      ],
+      "notesInFlow": true,
+      "notes": "A second feed means a second thing that can fail quietly."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "system_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "3d013393-a876-4152-b425-6425be9085d4",
+      "name": "Log TGA Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        3600
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: system_log"
+    },
+    {
+      "parameters": {
+        "content": "## 7 — INJECTOR EXPIRY\n\nAn adrenaline autoinjector expires in about 12 to 18 months. People buy one, put it in a bag, and find out it is out of date at the worst possible moment.\n\nA calendar reminder can do this for one device. It cannot do it for a household of four with different dates, and it cannot tell you that the replacement you need is currently in shortage — which the section above can.\n\nWe only speak at 90, 60, 30 and 7 days, and once after expiry. A reminder that arrives every day is a reminder nobody reads.",
+        "height": 560,
+        "width": 2100
+      },
+      "id": "e4d5cc17-33cc-4c39-9a27-3910d31359d4",
+      "name": "Sticky — Injector Expiry",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        3952
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "3beaf9fa-1600-41d6-ad85-053bba1e7991",
+      "name": "Daily Expiry Check",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        4304
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "users",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "f2d598a6-0b54-4f9c-b140-b0c0a245eb37",
+      "name": "Get Users For Expiry",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        4208
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: users — injector_expiry column."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Check Injector Expiry\n//  Only speak at meaningful distances: 90, 60, 30 and 7 days\n//  out, and once on the day it expires. Daily nagging is how\n//  you train someone to ignore you.\n// ═══════════════════════════════════════════════════════\n\n// ── Live profiles ───────────────────────────────────────────\n// Filling the form again is how a person updates their allergies,\n// so the NEWEST row per (email + name) is the one that counts.\n// Keying on name as well lets a parent register each child under\n// their own address as a separate person.\n// An unsubscribe only counts if it is newer than that email's latest\n// signup — so somebody who comes back is actually back.\nfunction liveProfiles(userItems, unsubItems) {\n  const latest = {};\n  const lastSignup = {};\n  userItems.forEach(function (it) {\n    const u = it && it.json;\n    if (!u || !u.email || String(u.email).indexOf('@') === -1) return;\n    const email = String(u.email).trim().toLowerCase();\n    const key = email + '|' + String(u.name || '').trim().toLowerCase();\n    const t = Date.parse(String(u.created_at || '')) || 0;\n    if (!latest[key] || t >= latest[key].t) latest[key] = { t: t, u: u };\n    if (!lastSignup[email] || t > lastSignup[email]) lastSignup[email] = t;\n  });\n  const optOut = {};\n  (unsubItems || []).forEach(function (it) {\n    const r = it && it.json;\n    if (!r || !r.email) return;\n    const email = String(r.email).trim().toLowerCase();\n    const t = Date.parse(String(r.unsubscribed_at || '')) || Date.now();\n    if (!optOut[email] || t > optOut[email]) optOut[email] = t;\n  });\n  return Object.keys(latest).map(function (k) { return latest[k].u; })\n    .filter(function (u) {\n      const email = String(u.email).trim().toLowerCase();\n      return !(optOut[email] && optOut[email] > (lastSignup[email] || 0));\n    });\n}\n\nconst SPEAK_AT = [90, 60, 30, 7, 0];\n\nconst out = [];\nconst today = new Date();\ntoday.setHours(0, 0, 0, 0);\n\nconst people = liveProfiles($('Get Users For Expiry').all(), $('Get Unsubscribes For Expiry').all());\n\nfor (const u of people) {\n\n  const raw = String(u.injector_expiry || '').trim();\n  if (!raw) continue;\n\n  // Accept 2027-04, 2027-04-30, 30/04/2027 and April 2027.\n  let d = null;\n  let m = raw.match(/^(\\d{4})-(\\d{1,2})(?:-(\\d{1,2}))?$/);\n  if (m) d = new Date(+m[1], +m[2] - 1, m[3] ? +m[3] : 28);\n  if (!d) {\n    m = raw.match(/^(\\d{1,2})[\\/\\-](\\d{1,2})[\\/\\-](\\d{4})$/);\n    if (m) d = new Date(+m[3], +m[2] - 1, +m[1]);\n  }\n  if (!d) { const p = Date.parse(raw); if (!isNaN(p)) d = new Date(p); }\n  if (!d || isNaN(d.getTime())) continue;\n\n  d.setHours(0, 0, 0, 0);\n  const days = Math.round((d - today) / 86400000);\n\n  const speak = SPEAK_AT.indexOf(days) !== -1 || days < 0;\n  if (!speak) continue;\n\n  // Past the date we say it once, not every day forever.\n  if (days < 0 && days !== -1) continue;\n\n  out.push({\n    json: {\n      name:         u.name || '',\n      email:        String(u.email).trim(),\n      device:       String(u.injector_type || 'adrenaline autoinjector').trim(),\n      expiry:       raw,\n      days_left:    days,\n      expired:      days < 0,\n      urgency:      days < 0 ? 'expired' : (days <= 7 ? 'urgent' : (days <= 30 ? 'soon' : 'planning')),\n      sent_at:      new Date().toISOString()\n    }\n  });\n}\n\nconsole.log(out.length + ' expiry reminders due today');\nreturn out;"
+      },
+      "id": "a86a1486-5b36-4661-a336-179188bc4afd",
+      "name": "Check Injector Expiry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        4208
+      ],
+      "notesInFlow": true,
+      "notes": "Speaks at 90 / 60 / 30 / 7 days and once on expiry. Never daily."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "due",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "5e83d769-a0c4-40de-be7b-c3b9989f550f",
+      "name": "Reminder Due?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        4208
+      ],
+      "notesInFlow": true,
+      "notes": "FALSE is recorded, not dropped."
+    },
+    {
+      "parameters": {},
+      "id": "c0d216fd-5ea6-448a-a891-44e2d8d4f555",
+      "name": "Nothing Due Today",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        864,
+        4400
+      ],
+      "notesInFlow": true,
+      "notes": "Most days this is the whole run. Correctly."
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.expired ? 'Your ' + $json.device + ' has expired' : 'Your ' + $json.device + ' expires in ' + $json.days_left + ' days' }}",
+        "message": "=<p>Hi {{ $json.name }},</p>\n\n{{ $json.expired\n  ? '<p style=\"background:#fdecea;padding:12px;border-left:4px solid #c42b1c\"><strong>Your device has passed its expiry date.</strong> Expired adrenaline can lose potency. Please arrange a replacement, and keep the old device until the new one is in your hand — an expired injector is still better than none.</p>'\n  : '<p>This is a heads-up, not an emergency. Your device expires in <strong>' + $json.days_left + ' days</strong>.</p>' }}\n\n<p><strong>Device:</strong> {{ $json.device }}<br>\n<strong>Expiry:</strong> {{ $json.expiry }}</p>\n\n<p><strong>Why we are telling you now</strong><br>\nReplacement can take a few days, and adrenaline autoinjectors have been in shortage in Australia before. We watch the TGA shortage feed as well, so if supply becomes a problem you will hear about that separately.</p>\n\n<hr>\n<p style=\"font-size:12px;color:#666\">Reminder based on the expiry date you gave us. This is not medical advice — your prescriber decides what you carry.<br><br><a href=\"https://your-instance.app.n8n.cloud/form/unsubscribe\">Unsubscribe</a></p>",
+        "options": {
+          "senderName": "AllerGreat",
+          "appendAttribution": false
+        }
+      },
+      "id": "cfecdba1-8048-459a-acd7-ff5b096d7ce6",
+      "name": "Send Expiry Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        4112
+      ],
+      "notesInFlow": true,
+      "webhookId": "23d37ae2-1387-4c70-84f4-3f1537e970e5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Different tone before and after the date."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// One log row per expiry reminder sent.\nlet m;\ntry { m = $('Check Injector Expiry').item.json; }\ncatch (e) { m = $('Check Injector Expiry').first().json; }\n\nreturn { json: {\n  sent_at:           m.sent_at,\n  user_email:        m.email,\n  product:           m.device + ' (expires ' + m.expiry + ')',\n  matched_allergens: m.urgency,\n  channel:           'email',\n  status:            'sent (expiry reminder)',\n  recall_guid:       'expiry-' + m.expiry\n}};"
+      },
+      "id": "604d3906-ea13-4ddc-b097-88c6e1110a47",
+      "name": "Build Expiry Log Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        4112
+      ],
+      "notesInFlow": true,
+      "notes": "Runs once per item so every single alert gets its own row in sent_log. In all-items mode this logged only the first."
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sent_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "ef19d6bb-ccb1-43a1-9a59-e5b59bcc9518",
+      "name": "Log Expiry Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        4112
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "TAB: sent_log"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "unsubscribes",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "8103255a-749e-4f24-ba85-e10e26abc416",
+      "name": "Get Unsubscribes For Expiry",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        324,
+        4058
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Opt-outs apply to expiry reminders too. Read once, not per user.",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "content": "## 8 — VENUE ENQUIRIES\nA parent writes the same allergy email to every restaurant, every childcare centre and every new school. For a family with two allergic children that is dozens of emails a year, each one retyped from memory, each one a chance to leave something out.\n\n**The parent chooses who is going and where. We write the email.** The app sends the selected family profiles; this section turns them into a clear, consistent message, sends it to the venue with replies routed straight back to the parent, sends the parent a copy, and records it.\n\nRestaurants are invited to list their kitchen in the directory — so every enquiry is also a way the directory grows without anyone scraping a menu.\n\n**Consent and opt-out.** The app will not send until the parent confirms they may share each person's health details. Every venue email carries an opt-out, and a venue that opts out is never contacted again.",
+        "height": 720,
+        "width": 1500,
+        "color": 5
+      },
+      "id": "5e1bd7aa-6ba9-48a8-9687-5a7a93f43007",
+      "name": "Sticky — Enquiries",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -248,
+        4440
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "AllerGreat — Venue enquiry",
+        "formDescription": "Used by the AllerGreat app to send allergy details to a restaurant, childcare centre or school.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Your name",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Your email",
+              "fieldType": "email",
+              "placeholder": "you@example.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Venue type",
+              "placeholder": "restaurant / childcare / school",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Venue name",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Venue email",
+              "fieldType": "email",
+              "placeholder": "bookings@venue.com.au",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Visit date",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Message",
+              "fieldType": "textarea",
+              "requiredField": false
+            },
+            {
+              "fieldLabel": "Profiles",
+              "fieldType": "textarea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "path": "enquiry",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Enquiry sent. A copy is on its way to your inbox."
+            }
+          }
+        }
+      },
+      "id": "5e99921e-863d-4956-bd7e-84a48df0acec",
+      "name": "Enquiry Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -168,
+        4820
+      ],
+      "webhookId": "6898525d-f43b-4ffb-9524-8f87ab0e8d01",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n//  Build Enquiry\n//  A parent should not have to retype the same allergy email\n//  for every restaurant, childcare centre and school. They\n//  choose who is going and where; this writes the email.\n//  Deterministic templates, no LLM: the wording a venue\n//  receives must be exactly what the family entered.\n// ═══════════════════════════════════════════════════════\n\nconst CANON = ['peanuts', 'tree nuts', 'milk', 'egg', 'soy', 'wheat/gluten',\n               'sesame', 'fish', 'shellfish', 'lupin', 'sulphites'];\nconst j = $('Enquiry Form').first().json;\nfunction pick(keys) {\n  for (const k of keys) {\n    const v = j[k];\n    if (v !== undefined && v !== null && String(v).trim() !== '') return v;\n  }\n  return '';\n}\nfunction esc(s) {\n  return String(s == null ? '' : s).replace(/[&<>\"]/g, function (c) {\n    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c];\n  });\n}\nfunction isEmail(s) { return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(String(s || '').trim()); }\n\nconst senderName  = String(pick(['Your name'])).trim() || 'A parent';\nconst senderEmail = String(pick(['Your email'])).trim().toLowerCase();\nconst typeRaw     = String(pick(['Venue type'])).trim().toLowerCase();\nconst venueType   = /child|daycare|kinder|preschool|early/.test(typeRaw) ? 'childcare'\n                  : /school/.test(typeRaw) ? 'school'\n                  : /restaurant|cafe|café|dining|bar|pub|hotel/.test(typeRaw) || !typeRaw ? 'restaurant' : 'other';\nconst venueName   = String(pick(['Venue name'])).trim();\nconst venueEmail  = String(pick(['Venue email'])).trim().toLowerCase();\nconst visitDate   = String(pick(['Visit date'])).trim();\nconst note        = String(pick(['Message'])).trim().slice(0, 1000);\n\n// Profiles arrive as JSON text from the app.\nlet raw = pick(['Profiles']);\nlet list = [];\ntry { list = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { list = []; }\nif (!Array.isArray(list)) list = [];\n\nconst SEV = { anaphylaxis: 'Anaphylaxis risk (life-threatening)', severe: 'Severe reaction', mild: 'Mild reaction' };\nconst profiles = list.map(function (p) {\n  p = p || {};\n  const allergens = (Array.isArray(p.allergens) ? p.allergens : String(p.allergens || '').split(','))\n    .map(function (a) { return String(a).trim().toLowerCase(); })\n    .filter(function (a, i, arr) { return CANON.indexOf(a) !== -1 && arr.indexOf(a) === i; });\n  const sev = String(p.severity || '').toLowerCase();\n  return {\n    name:      String(p.name || '').trim().slice(0, 80),\n    relation:  String(p.relation || '').trim().slice(0, 40),\n    allergens: allergens,\n    severity:  SEV[sev] ? sev : 'severe',\n    injector:  String(p.injector || '').trim().slice(0, 40),\n    notes:     String(p.notes || '').trim().slice(0, 300)\n  };\n}).filter(function (p) { return p.name && (p.allergens.length || p.notes); });\n\nconst problems = [];\nif (!isEmail(senderEmail)) problems.push('your email is missing or malformed');\nif (!isEmail(venueEmail))  problems.push('the venue email is missing or malformed');\nif (!profiles.length)      problems.push('no profile with allergies was selected');\n// A venue that opted out is never contacted again (Spam Act 2003).\nconst optedOut = $('Get Venue Opt-outs').all().some(function (r) {\n  return r && r.json && String(r.json.email || '').trim().toLowerCase() === venueEmail;\n});\nif (optedOut) problems.push('this venue has asked not to receive enquiries');\n\nconst n = profiles.length;\nconst names = profiles.map(function (p) { return p.name; });\nconst nameList = names.length <= 1 ? (names[0] || '') : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];\nconst venue = venueName || (venueType === 'restaurant' ? 'your restaurant' : venueType === 'other' ? 'your venue' : 'your service');\n\nlet subject, intro, asks;\nif (venueType === 'childcare' || venueType === 'school') {\n  subject = 'Allergy information for ' + nameList + (venueName ? ' — ' + venueName : '');\n  intro = esc(senderName) + ' is sending the allergy details for <b>' + esc(nameList) + '</b>, who ' +\n          (n === 1 ? 'attends' : 'attend') + ' ' + esc(venue) + (visitDate ? ' from ' + esc(visitDate) : '') + '.';\n  asks = ['Please add these details to ' + (n === 1 ? 'their record' : 'their records') +\n          ' and share them with every staff member who prepares food or supervises meals.',\n          'Please confirm a current ASCIA Action Plan is on file for anyone at risk of anaphylaxis.',\n          'Let us know if you need anything else from us — for example a spare adrenaline autoinjector.'];\n} else {\n  subject = 'Allergy information for ' + n + (n === 1 ? ' guest' : ' guests') +\n            (visitDate ? ' on ' + visitDate : '') + (venueName ? ' — ' + venueName : '');\n  intro = esc(senderName) + ' is planning to eat at ' + esc(venue) + (visitDate ? ' on <b>' + esc(visitDate) + '</b>' : '') +\n          '. ' + (n === 1 ? 'One person' : n + ' people') + ' in the group ' + (n === 1 ? 'has' : 'have') +\n          ' food allergies, listed below.';\n  asks = ['Which dishes can be prepared safely for them?',\n          'How do you prevent cross-contact — shared fryers, surfaces or utensils?',\n          'Is there anything on the menu they should avoid entirely?'];\n}\n\nconst cell = 'padding:10px 12px;border-bottom:1px solid #e3e3e0;vertical-align:top;text-align:left';\nconst rows = profiles.map(function (p) {\n  return '<tr>' +\n    '<td style=\"' + cell + '\"><b>' + esc(p.name) + '</b>' + (p.relation ? '<br><span style=\"color:#6b6e68\">' + esc(p.relation) + '</span>' : '') + '</td>' +\n    '<td style=\"' + cell + '\">' + (p.allergens.length ? esc(p.allergens.join(', ')) : '—') + '</td>' +\n    '<td style=\"' + cell + (p.severity === 'anaphylaxis' ? ';color:#b32718;font-weight:600' : '') + '\">' + esc(SEV[p.severity]) +\n      (p.injector ? '<br><span style=\"color:#41443f;font-weight:400\">Carries ' + esc(p.injector) + '</span>' : '') + '</td>' +\n    '<td style=\"' + cell + '\">' + (p.notes ? esc(p.notes) : '') + '</td></tr>';\n}).join('');\n\nconst body =\n  '<div style=\"font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#111312;max-width:640px\">' +\n  '<p>Hello ' + esc(venueName ? venueName + ' team' : 'there') + ',</p>' +\n  '<p>' + intro + '</p>' +\n  (venueType === 'restaurant' ? '<p style=\"font-size:13.5px;color:#41443f;background:#f4f4f1;padding:10px 12px;border-radius:8px\">' +\n   'Under the Food Standards Code, food businesses must give customers accurate allergen information when asked. ' +\n   'Please only confirm what your kitchen can reliably do. A written reply helps this family plan safely.</p>' : '') +\n  '<table style=\"border-collapse:collapse;width:100%;margin:14px 0;font-size:14px\">' +\n    '<tr style=\"background:#f4f4f1\"><th style=\"' + cell + '\">Name</th><th style=\"' + cell + '\">Allergies</th>' +\n    '<th style=\"' + cell + '\">Severity</th><th style=\"' + cell + '\">Notes</th></tr>' + rows + '</table>' +\n  (note ? '<p style=\"border-left:3px solid #c42b1c;padding-left:12px;margin:16px 0\"><b>A note from ' + esc(senderName) + ':</b><br>' + esc(note).replace(/\\n/g, '<br>') + '</p>' : '') +\n  '<p><b>' + (venueType === 'restaurant' ? 'Could you let them know:' : 'We would be grateful if you could:') + '</b></p>' +\n  '<ul>' + asks.map(function (a) { return '<li>' + a + '</li>'; }).join('') + '</ul>' +\n  '<p><b>Just reply to this email</b> — your answer goes straight to ' + esc(senderName) + ' at ' + esc(senderEmail) + '.</p>' +\n  '<hr style=\"border:0;border-top:1px solid #e3e3e0;margin:22px 0\">' +\n  '<p style=\"font-size:12.5px;color:#6b6e68\">Sent with AllerGreat on behalf of ' + esc(senderName) +\n  '. This is the family\\'s own description of their allergies, not medical advice. To stop receiving enquiries sent through AllerGreat, <a href=\"https://your-instance.app.n8n.cloud/form/unsubscribe\">opt out here</a>.' +\n  (venueType === 'restaurant' ? ' Restaurants can tell allergy-aware diners what their kitchen can accommodate, free: ' +\n   '<a href=\"https://your-instance.app.n8n.cloud/form/restaurant\">list your kitchen on AllerGreat</a>.' : '') + '</p></div>';\n\nconst copyBody =\n  '<div style=\"font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#111312;max-width:640px\">' +\n  '<p>Hi ' + esc(senderName) + ',</p><p>We sent the email below to <b>' + esc(venueName || venueEmail) + '</b> (' + esc(venueEmail) +\n  '). When they reply, it comes straight to you.</p><hr style=\"border:0;border-top:1px solid #e3e3e0;margin:18px 0\"></div>' + body;\n\nconst allergenSummary = profiles.map(function (p) {\n  return p.name + ': ' + (p.allergens.join(', ') || 'see notes') + ' (' + p.severity + ')';\n}).join(' | ');\n\nreturn [{ json: {\n  valid:             problems.length === 0,\n  problems:          problems.join('; '),\n  enquiry_id:        'enq_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),\n  created_at:        new Date().toISOString(),\n  sender_name:       senderName,\n  sender_email:      senderEmail,\n  venue_type:        venueType,\n  venue_name:        venueName,\n  venue_email:       venueEmail,\n  visit_date:        visitDate,\n  profile_count:     n,\n  profile_names:     names.join(', '),\n  allergens_summary: allergenSummary,\n  subject:           subject,\n  html:              body,\n  copy_subject:      'Sent: ' + subject,\n  copy_html:         copyBody\n}}];"
+      },
+      "id": "92b3ec87-9dce-4474-ad0f-e8c58485b0c5",
+      "name": "Build Enquiry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        72,
+        4820
+      ],
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "is-allergen",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "db3d6350-1194-462a-b33d-8bfa80bf12d5",
+      "name": "Enquiry Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        312,
+        4820
+      ],
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.venue_email }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "replyTo": "={{ $json.sender_email }}",
+          "senderName": "AllerGreat"
+        }
+      },
+      "id": "30e39063-6769-4e74-93c0-d069c41832e3",
+      "name": "Send Enquiry To Venue",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        572,
+        4720
+      ],
+      "notesInFlow": true,
+      "webhookId": "35494e3f-8830-452a-b960-b4beffaacf4e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Build Enquiry').first().json.sender_email }}",
+        "subject": "={{ $('Build Enquiry').first().json.copy_subject }}",
+        "message": "={{ $('Build Enquiry').first().json.copy_html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "AllerGreat"
+        }
+      },
+      "id": "825e1269-6a5d-4446-92e9-af250821a087",
+      "name": "Send Copy To Sender",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        4640
+      ],
+      "notesInFlow": true,
+      "webhookId": "78b014d5-5df3-428a-b726-9c2fe372eee9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Public input reaches a spreadsheet. A value starting with = + - or @\n// would be run by Google Sheets as a formula, so it is prefixed with an\n// invisible zero-width space and always stored as plain text.\nfunction safeItems(items) {\n  return items.map(function (it) {\n    var o = {};\n    Object.keys(it.json).forEach(function (k) {\n      var v = it.json[k];\n      o[k] = (typeof v === 'string' && /^[=+\\-@\\t\\r]/.test(v)) ? '\\u200B' + v : v;\n    });\n    return { json: o };\n  });\n}\n\n// Proof the enquiry went out: who, to whom, for which people.\nconst e = $('Build Enquiry').first().json;\nreturn safeItems([{ json: {\n  sent_at:           e.created_at,\n  user_email:        e.sender_email,\n  product:           'Enquiry to ' + (e.venue_name || e.venue_email) + ' <' + e.venue_email + '>',\n  matched_allergens: e.allergens_summary,\n  channel:           'venue enquiry (' + e.venue_type + ')',\n  status:            'sent',\n  recall_guid:       e.enquiry_id\n}}]);"
+      },
+      "id": "ec107cd8-923a-4b2e-a16a-f1be138957ed",
+      "name": "Build Enquiry Log Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        4640
+      ],
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sent_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "d198ab2b-6637-48ef-86f4-aa4a3b8932be",
+      "name": "Log Enquiry",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        4640
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Public input reaches a spreadsheet. A value starting with = + - or @\n// would be run by Google Sheets as a formula, so it is prefixed with an\n// invisible zero-width space and always stored as plain text.\nfunction safeItems(items) {\n  return items.map(function (it) {\n    var o = {};\n    Object.keys(it.json).forEach(function (k) {\n      var v = it.json[k];\n      o[k] = (typeof v === 'string' && /^[=+\\-@\\t\\r]/.test(v)) ? '\\u200B' + v : v;\n    });\n    return { json: o };\n  });\n}\n\n// The venue email did not go out. Record it rather than lose it.\nconst e = $('Build Enquiry').first().json;\nreturn safeItems([{ json: {\n  sent_at:           new Date().toISOString(),\n  user_email:        e.sender_email,\n  product:           'Enquiry to ' + (e.venue_name || e.venue_email) + ' <' + e.venue_email + '>',\n  matched_allergens: e.allergens_summary,\n  channel:           'venue enquiry (' + e.venue_type + ')',\n  status:            'failed: ' + String(($json && $json.error && ($json.error.message || $json.error)) || 'delivery error'),\n  recall_guid:       e.enquiry_id\n}}]);"
+      },
+      "id": "09e2d376-4209-481a-ae5d-dfae4240a323",
+      "name": "Build Enquiry Failed Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        4880
+      ],
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "sent_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "ebe0d0c1-3c48-4098-8512-e77bd3c107ee",
+      "name": "Log Enquiry Failed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        4880
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rejected before sending. Say why, in words someone can act on.\nreturn [{ json: {\n  timestamp:     new Date().toISOString(),\n  node_name:     'Enquiry Valid?',\n  error_message: 'Enquiry not sent: ' + ($json.problems || 'invalid input') +\n                 ' | from ' + ($json.sender_email || '?') + ' to ' + ($json.venue_email || '?'),\n  severity:      'warning'\n}}];"
+      },
+      "id": "f6e8ac39-458f-4542-aad8-eb8b1bd0f567",
+      "name": "Describe Invalid Enquiry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        572,
+        5040
+      ],
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "system_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "3117ded3-7295-43bc-8e68-46e9a0ed24b7",
+      "name": "Log Invalid Enquiry",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        5040
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AllerGreat",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "unsubscribes",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "3b7d3473-61d4-4dee-80d6-9dde142621ae",
+      "name": "Get Venue Opt-outs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        5020
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Venues that asked not to receive enquiries. Checked before anything is sent.",
+      "executeOnce": true
+    }
+  ],
+  "connections": {
+    "Allergy Profile Form": {
+      "main": [
+        [
+          {
+            "node": "Validate Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Submission": {
+      "main": [
+        [
+          {
+            "node": "Normalise Allergens",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Describe Invalid Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalise Allergens": {
+      "main": [
+        [
+          {
+            "node": "Store Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Profile": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Describe Storage Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Describe Storage Failure": {
+      "main": [
+        [
+          {
+            "node": "Log Storage Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Describe Invalid Submission": {
+      "main": [
+        [
+          {
+            "node": "Log Invalid Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Recall Check (Demo)": {
+      "main": [
+        [
+          {
+            "node": "Demo Controls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every Hour": {
+      "main": [
+        [
+          {
+            "node": "Demo Controls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Processed Recalls": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Extract Allergens",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Error Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log System Error": {
+      "main": [
+        [
+          {
+            "node": "Notify Operator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Allergens": {
+      "main": [
+        [
+          {
+            "node": "Skip Already Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip Already Processed": {
+      "main": [
+        [
+          {
+            "node": "Is Allergen Recall?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Allergen Recall?": {
+      "main": [
+        [
+          {
+            "node": "Store Processed Recall",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not Allergen Related",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Processed Recall": {
+      "main": [
+        [
+          {
+            "node": "Get Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Users": {
+      "main": [
+        [
+          {
+            "node": "Get Unsubscribes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Users To Recalls": {
+      "main": [
+        [
+          {
+            "node": "Anaphylaxis?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Recall Alert": {
+      "main": [
+        [
+          {
+            "node": "Build Sent Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Failed Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Health Check": {
+      "main": [
+        [
+          {
+            "node": "Read Recall History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Recall History": {
+      "main": [
+        [
+          {
+            "node": "Check Feed Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Feed Health": {
+      "main": [
+        [
+          {
+            "node": "Feed Healthy?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feed Healthy?": {
+      "main": [
+        [
+          {
+            "node": "All Good",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Operator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Operator": {
+      "main": [
+        [
+          {
+            "node": "Build Stall Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Sent Row": {
+      "main": [
+        [
+          {
+            "node": "Log Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Failed Row": {
+      "main": [
+        [
+          {
+            "node": "Log Failed Send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Error Row": {
+      "main": [
+        [
+          {
+            "node": "Log System Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Stall Row": {
+      "main": [
+        [
+          {
+            "node": "Log Stall",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unsubscribes": {
+      "main": [
+        [
+          {
+            "node": "Match Users To Recalls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Urgent Alert": {
+      "main": [
+        [
+          {
+            "node": "Build Sent Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Failed Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Mild Alert": {
+      "main": [
+        [
+          {
+            "node": "Build Sent Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Failed Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unsubscribe Form": {
+      "main": [
+        [
+          {
+            "node": "Prepare Unsubscribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Unsubscribe": {
+      "main": [
+        [
+          {
+            "node": "Record Unsubscribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Unsubscribe": {
+      "main": [
+        [
+          {
+            "node": "Confirm Unsubscribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anaphylaxis?": {
+      "main": [
+        [
+          {
+            "node": "Send Urgent Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mild?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mild?": {
+      "main": [
+        [
+          {
+            "node": "Send Mild Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Recall Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restaurant Listing Form": {
+      "main": [
+        [
+          {
+            "node": "Prepare Listing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Listing": {
+      "main": [
+        [
+          {
+            "node": "Store Listing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Listing": {
+      "main": [
+        [
+          {
+            "node": "Confirm Listing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Demo Controls": {
+      "main": [
+        [
+          {
+            "node": "Get Processed Recalls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Medicine Check": {
+      "main": [
+        [
+          {
+            "node": "Get Processed Shortages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Processed Shortages": {
+      "main": [
+        [
+          {
+            "node": "TGA RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TGA RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Extract Medicines",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build TGA Error Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build TGA Error Row": {
+      "main": [
+        [
+          {
+            "node": "Log TGA Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Medicines": {
+      "main": [
+        [
+          {
+            "node": "Skip Processed Shortages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip Processed Shortages": {
+      "main": [
+        [
+          {
+            "node": "Store Processed Shortage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Processed Shortage": {
+      "main": [
+        [
+          {
+            "node": "Get Users For Medicines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Users For Medicines": {
+      "main": [
+        [
+          {
+            "node": "Get Unsubscribes For Medicines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unsubscribes For Medicines": {
+      "main": [
+        [
+          {
+            "node": "Match Users To Shortages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Users To Shortages": {
+      "main": [
+        [
+          {
+            "node": "Send Shortage Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Shortage Alert": {
+      "main": [
+        [
+          {
+            "node": "Build Shortage Sent Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Shortage Fail Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Shortage Sent Row": {
+      "main": [
+        [
+          {
+            "node": "Log Shortage Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Shortage Fail Row": {
+      "main": [
+        [
+          {
+            "node": "Log Shortage Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Expiry Check": {
+      "main": [
+        [
+          {
+            "node": "Get Users For Expiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Users For Expiry": {
+      "main": [
+        [
+          {
+            "node": "Get Unsubscribes For Expiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Injector Expiry": {
+      "main": [
+        [
+          {
+            "node": "Reminder Due?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reminder Due?": {
+      "main": [
+        [
+          {
+            "node": "Send Expiry Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nothing Due Today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Expiry Reminder": {
+      "main": [
+        [
+          {
+            "node": "Build Expiry Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Expiry Log Row": {
+      "main": [
+        [
+          {
+            "node": "Log Expiry Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unsubscribes For Expiry": {
+      "main": [
+        [
+          {
+            "node": "Check Injector Expiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enquiry Form": {
+      "main": [
+        [
+          {
+            "node": "Get Venue Opt-outs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Enquiry": {
+      "main": [
+        [
+          {
+            "node": "Enquiry Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enquiry Valid?": {
+      "main": [
+        [
+          {
+            "node": "Send Enquiry To Venue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Describe Invalid Enquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Enquiry To Venue": {
+      "main": [
+        [
+          {
+            "node": "Send Copy To Sender",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Enquiry Failed Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Copy To Sender": {
+      "main": [
+        [
+          {
+            "node": "Build Enquiry Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Enquiry Log Row": {
+      "main": [
+        [
+          {
+            "node": "Log Enquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Enquiry Failed Row": {
+      "main": [
+        [
+          {
+            "node": "Log Enquiry Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Describe Invalid Enquiry": {
+      "main": [
+        [
+          {
+            "node": "Log Invalid Enquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Venue Opt-outs": {
+      "main": [
+        [
+          {
+            "node": "Build Enquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": []
+}
